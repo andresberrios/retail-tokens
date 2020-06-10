@@ -1,0 +1,6 @@
+{
+  "name": "contract",
+  "scripts": {
+    "build": "eosio-cpp -abigen -R ricardian -contract eosio.token -o build/eosio.token.wasm src/eosio.token.cpp"
+  }
+}
