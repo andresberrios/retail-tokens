@@ -36,7 +36,7 @@ namespace eosio
       const auto &st = *existing;
       check(to == st.issuer, "tokens can only be issued to issuer account");
 
-      require_auth(st.issuer);
+      check(has_auth(st.issuer) || has_auth(get_self()), "only issuer or contract account can issue");
       check(quantity.is_valid(), "invalid quantity");
       check(quantity.amount > 0, "must issue positive quantity");
 
