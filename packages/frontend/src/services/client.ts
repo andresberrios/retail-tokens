@@ -1,5 +1,11 @@
-export class BlockchainClient {
-  constructor(public fetch: typeof window.fetch) {}
+import { JsonRpc } from "@eoscafe/hyperion";
+
+export default class BlockchainClient {
+  rpc: JsonRpc;
+
+  constructor(endpoint = "http://localhost:8888/") {
+    this.rpc = new JsonRpc(endpoint, { fetch });
+  }
 
   async getActions(
     account: string,
@@ -7,8 +13,10 @@ export class BlockchainClient {
     limit = 100,
     sort: "desc" | "asc" = "desc"
   ) {
-    return this.fetch(
-      `https://telos.caleos.io/v2/history/get_actions?account=${account}&skip=${skip}&limit=${limit}&sort=${sort}`
-    );
+    return this.rpc.get_actions(account, {
+      skip,
+      limit,
+      sort
+    });
   }
 }
