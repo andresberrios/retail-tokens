@@ -7,6 +7,7 @@
       <span class="mr-auto">User Name</span>
     </b-container>
     <TokenBalance />
+    <UserList />
     <TransactionHistory />
   </div>
 </template>
@@ -15,9 +16,10 @@
 import { Component, Vue } from "vue-property-decorator";
 import TokenBalance from "../components/TokenBalance.vue";
 import TransactionHistory from "../components/TransactionHistory.vue";
+import UserList from "../components/UserList.vue";
 
 @Component({
-  components: { TokenBalance, TransactionHistory }
+  components: { TokenBalance, TransactionHistory, UserList }
 })
 export default class AccountView extends Vue {
   mounted() {

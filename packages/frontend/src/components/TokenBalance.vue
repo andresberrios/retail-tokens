@@ -5,7 +5,11 @@
         <b-col v-for="token in tokens" :key="token.name">
           <span>{{ token.value }}</span>
           <b-avatar size="1.5em">
-            <svg :data-jdenticon-value="token.name" width="1.5em" height="1.5em" />
+            <svg
+              :data-jdenticon-value="token.name"
+              width="1.5em"
+              height="1.5em"
+            />
           </b-avatar>
         </b-col>
       </b-row>
