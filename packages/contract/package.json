@@ -2,6 +2,7 @@
   "name": "contract",
   "scripts": {
     "clean": "rm -rf build && mkdir -p build",
-    "build": "npm run clean && eosio-cpp -abigen -R ricardian -contract eosio.token -o build/eosio.token.wasm src/eosio.token.cpp"
+    "build": "npm run clean && eosio-cpp -abigen -R ricardian -contract eosio.token -o build/eosio.token.wasm src/eosio.token.cpp",
+    "deploy": "DOTENV_CONFIG_PATH=.env.local node -r dotenv/config -r ts-node/register deploy.ts"
   }
 }
