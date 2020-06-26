@@ -1,10 +1,16 @@
-import { JsonRpc } from "@eoscafe/hyperion";
+import { JsonRpc as Hyperion } from "@eoscafe/hyperion";
+import { JsonRpc } from "eosjs";
 
 export default class BlockchainClient {
-  rpc: JsonRpc;
+  rpc: Hyperion;
+  eosRpc: JsonRpc;
 
-  constructor(endpoint = "http://localhost:8888/") {
-    this.rpc = new JsonRpc(endpoint, { fetch });
+  constructor(
+    endpoint = "http://localhost:8888/",
+    public contract = "retailtokens"
+  ) {
+    this.rpc = new Hyperion(endpoint, { fetch });
+    this.eosRpc = new JsonRpc(endpoint);
   }
 
   async getActions(
@@ -18,5 +24,27 @@ export default class BlockchainClient {
       limit,
       sort
     });
+  }
+
+  async getTokens(account: string) {
+    return this.eosRpc.get_table_rows({
+      json: true,
+      code: this.contract,
+      scope: account,
+      table: "accounts"
+    });
+  }
+
+  async getAllTokens() {
+    const { actions } = await this.rpc.get_actions(this.contract, {
+      "act.name": "create"
+    });
+    return actions.map(a => (a.act.data as any).maximum_supply.split(" ")[1]);
+
+    // Alternate implementation, requires converting eosio names into symbol_codes:
+    // const data = await this.eosRpc.get_table_by_scope({
+    //   code: "retailtokens",
+    //   table: "stat"
+    // });
   }
 }
