@@ -3,10 +3,14 @@
     <b-container>
       <b-list-group>
         <b-list-group-item v-for="user in users" :key="user.id">
-          <b-avatar button @click="onClick" size="2em">
-            <svg :data-jdenticon-value="user.name" width="2em" height="2em" />
-          </b-avatar>
-          <a class="mx-2" href="#">{{ user.name }}</a>
+          <router-link
+            :to="{ name: 'account', params: { account: user.name } }"
+          >
+            <b-avatar size="2em">
+              <svg :data-jdenticon-value="user.name" width="2em" height="2em" />
+            </b-avatar>
+            {{ user.name }}
+          </router-link>
           <b-icon icon="arrow-right"></b-icon>
           <span class="mx-2">{{ user.amount }}</span>
         </b-list-group-item>

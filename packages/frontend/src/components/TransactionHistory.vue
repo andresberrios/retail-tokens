@@ -10,7 +10,36 @@
         head-variant="dark"
         table-variant="dark"
         stacked="sm"
-      ></b-table>
+      >
+        <template v-slot:cell(from)="data">
+          <router-link
+            :to="{ name: 'account', params: { account: data.value } }"
+          >
+            <b-avatar size="2em">
+              <svg
+                :data-jdenticon-value="data.value"
+                width="2em"
+                height="2em"
+              />
+            </b-avatar>
+            {{ data.value }}
+          </router-link>
+        </template>
+        <template v-slot:cell(to)="data">
+          <router-link
+            :to="{ name: 'account', params: { account: data.value } }"
+          >
+            <b-avatar size="2em">
+              <svg
+                :data-jdenticon-value="data.value"
+                width="2em"
+                height="2em"
+              />
+            </b-avatar>
+            {{ data.value }}
+          </router-link>
+        </template>
+      </b-table>
     </b-container>
   </div>
 </template>
@@ -20,20 +49,11 @@ import { Component, Vue } from "vue-property-decorator";
 
 @Component
 export default class TransactionHistory extends Vue {
-  fields = [
-    { label: "ID", key: "id" },
-    "date",
-    "action",
-    "to",
-    "from",
-    "amount",
-    "memo"
-  ];
+  fields = [{ label: "ID", key: "id" }, "date", "from", "to", "amount", "memo"];
   items: unknown[] = [
     {
       id: "12aabbcc",
       date: "25062020",
-      action: "sent",
       to: "santi",
       from: "andres",
       amount: "3000EOS"
@@ -41,7 +61,6 @@ export default class TransactionHistory extends Vue {
     {
       id: "12abbcdc",
       date: "26062020",
-      action: "received",
       to: "andres",
       from: "santi",
       amount: "3000EOS"
@@ -49,7 +68,6 @@ export default class TransactionHistory extends Vue {
     {
       id: "12aabbcc",
       date: "25062020",
-      action: "sent",
       to: "santi",
       from: "andres",
       amount: "3000EOS"
@@ -57,7 +75,6 @@ export default class TransactionHistory extends Vue {
     {
       id: "12aabbcc",
       date: "25062020",
-      action: "sent",
       to: "santi",
       from: "andres",
       amount: "3000EOS"
@@ -65,7 +82,6 @@ export default class TransactionHistory extends Vue {
     {
       id: "12aabbcc",
       date: "25062020",
-      action: "sent",
       to: "santi",
       from: "andres",
       amount: "3000EOS"
@@ -73,7 +89,6 @@ export default class TransactionHistory extends Vue {
     {
       id: "12aabbcc",
       date: "25062020",
-      action: "sent",
       to: "santi",
       from: "andres",
       amount: "3000EOS"
@@ -81,7 +96,6 @@ export default class TransactionHistory extends Vue {
     {
       id: "12aabbcc",
       date: "25062020",
-      action: "sent",
       to: "santi",
       from: "andres",
       amount: "3000EOS"
@@ -89,7 +103,6 @@ export default class TransactionHistory extends Vue {
     {
       id: "12aabbcc",
       date: "25062020",
-      action: "sent",
       to: "santi",
       from: "andres",
       amount: "3000EOS"
@@ -97,7 +110,6 @@ export default class TransactionHistory extends Vue {
     {
       id: "12aabbcc",
       date: "25062020",
-      action: "sent",
       to: "santi",
       from: "andres",
       amount: "3000EOS"
@@ -105,7 +117,6 @@ export default class TransactionHistory extends Vue {
     {
       id: "12aabbcc",
       date: "25062020",
-      action: "sent",
       to: "santi",
       from: "andres",
       amount: "3000EOS"
@@ -113,7 +124,6 @@ export default class TransactionHistory extends Vue {
     {
       id: "12aabbcc",
       date: "25062020",
-      action: "sent",
       to: "santi",
       from: "andres",
       amount: "3000EOS"
@@ -121,7 +131,6 @@ export default class TransactionHistory extends Vue {
     {
       id: "12aabbcc",
       date: "25062020",
-      action: "sent",
       to: "santi",
       from: "andres",
       amount: "3000EOS"
@@ -129,7 +138,6 @@ export default class TransactionHistory extends Vue {
     {
       id: "12aabbcc",
       date: "25062020",
-      action: "sent",
       to: "santi",
       from: "andres",
       amount: "3000EOS"
