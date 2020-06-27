@@ -9,12 +9,14 @@ const routes: Array<RouteConfig> = [
   {
     path: "/",
     name: "home",
+    meta: { title: "Home" },
     component: Home
   },
   {
-    path: "/account/:id",
+    path: "/account/:account",
     name: "account",
     meta: { title: "Account" },
+    props: true,
     component: AccountView
   }
 ];
@@ -23,6 +25,12 @@ const router = new VueRouter({
   mode: "history",
   base: process.env.BASE_URL,
   routes
+});
+
+router.afterEach(to => {
+  Vue.nextTick(() => {
+    document.title = to.meta.title || to.name || "frontend";
+  });
 });
 
 export default router;

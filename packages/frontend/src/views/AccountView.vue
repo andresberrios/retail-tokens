@@ -4,7 +4,7 @@
       <b-avatar size="4em">
         <svg data-jdenticon-value="eosio" width="4em" height="4em" />
       </b-avatar>
-      <span class="mr-auto">User Name</span>
+      <span class="mr-auto">{{ account }}</span>
     </b-container>
     <TokenBalance />
     <UserList />
@@ -12,8 +12,8 @@
   </div>
 </template>
 
-<script>
-import { Component, Vue } from "vue-property-decorator";
+<script lang="ts">
+import { Component, Vue, Prop } from "vue-property-decorator";
 import TokenBalance from "../components/TokenBalance.vue";
 import TransactionHistory from "../components/TransactionHistory.vue";
 import UserList from "../components/UserList.vue";
@@ -22,8 +22,14 @@ import UserList from "../components/UserList.vue";
   components: { TokenBalance, TransactionHistory, UserList }
 })
 export default class AccountView extends Vue {
+  @Prop({ required: true })
+  account!: string;
+
   mounted() {
-    window.jdenticon();
+    const win = window as { jdenticon?: Function };
+    if (win.jdenticon) {
+      win.jdenticon();
+    }
   }
 }
 </script>
