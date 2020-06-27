@@ -6,8 +6,8 @@ export default class BlockchainClient {
   eosRpc: JsonRpc;
 
   constructor(
-    endpoint = "http://localhost:8888/",
-    public contract = "retailtokens"
+    endpoint = process.env.VUE_APP_NODE_ENDPOINT as string,
+    public contract = process.env.VUE_APP_CONTRACT_ACCOUNT as string
   ) {
     this.rpc = new Hyperion(endpoint, { fetch });
     this.eosRpc = new JsonRpc(endpoint);
