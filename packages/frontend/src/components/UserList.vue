@@ -6,9 +6,10 @@
           <router-link
             :to="{ name: 'account', params: { account: user.name } }"
           >
-            <b-avatar size="2em">
+            <Avatar size="2em" :value="user.name" />
+            <!-- <b-avatar size="2em">
               <svg :data-jdenticon-value="user.name" width="2em" height="2em" />
-            </b-avatar>
+            </b-avatar> -->
             {{ user.name }}
           </router-link>
           <b-icon icon="arrow-right"></b-icon>
@@ -21,8 +22,11 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
+import Avatar from "../components/Avatar.vue";
 
-@Component
+@Component({
+  components: { Avatar }
+})
 export default class UserList extends Vue {
   users: unknown[] = [
     { name: "chanchibon", id: "12345", amount: "2.0000 RTO" },

@@ -15,13 +15,14 @@
           <router-link
             :to="{ name: 'account', params: { account: data.value } }"
           >
-            <b-avatar size="2em">
+            <Avatar size="2em" :value="data.value" />
+            <!-- <b-avatar size="2em">
               <svg
                 :data-jdenticon-value="data.value"
                 width="2em"
                 height="2em"
               />
-            </b-avatar>
+            </b-avatar> -->
             {{ data.value }}
           </router-link>
         </template>
@@ -29,13 +30,7 @@
           <router-link
             :to="{ name: 'account', params: { account: data.value } }"
           >
-            <b-avatar size="2em">
-              <svg
-                :data-jdenticon-value="data.value"
-                width="2em"
-                height="2em"
-              />
-            </b-avatar>
+            <Avatar size="2em" :value="data.value" />
             {{ data.value }}
           </router-link>
         </template>
@@ -46,8 +41,11 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
+import Avatar from "../components/Avatar.vue";
 
-@Component
+@Component({
+  components: { Avatar }
+})
 export default class TransactionHistory extends Vue {
   fields = [{ label: "ID", key: "id" }, "date", "from", "to", "amount", "memo"];
   items: unknown[] = [
