@@ -1,5 +1,5 @@
 <template>
-  <b-avatar rounded :size="size">
+  <b-avatar variant="dark" rounded :size="size">
     <svg ref="frame" :width="size" :height="size" />
   </b-avatar>
 </template>

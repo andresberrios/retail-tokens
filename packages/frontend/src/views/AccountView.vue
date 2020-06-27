@@ -26,13 +26,6 @@ import Avatar from "../components/Avatar.vue";
 export default class AccountView extends Vue {
   @Prop({ required: true })
   account!: string;
-
-  // mounted() {
-  //   const win = window as { jdenticon?: Function };
-  //   if (win.jdenticon) {
-  //     win.jdenticon();
-  //   }
-  // }
 }
 </script>
 

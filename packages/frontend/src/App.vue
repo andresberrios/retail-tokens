@@ -17,4 +17,8 @@ import NavBar from "../src/components/NavBar.vue";
 export default class App extends Vue {}
 </script>
 
-<style lang="scss"></style>
+<style>
+/* #app {
+  background-color: #6c757c;
+} */
+</style>
