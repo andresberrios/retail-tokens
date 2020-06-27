@@ -36,10 +36,14 @@ export default class BlockchainClient {
   }
 
   async getAllTokens() {
-    const { actions } = await this.rpc.get_actions(this.contract, {
-      "act.name": "create"
-    });
-    return actions.map(a => (a.act.data as any).maximum_supply.split(" ")[1]);
+    const { actions } = await this.rpc.get_actions<{ maximum_supply: string }>(
+      this.contract,
+      {
+        "act.account": this.contract,
+        "act.name": "create"
+      }
+    );
+    return actions.map(a => a.act.data.maximum_supply.split(" ")[1]);
 
     // Alternate implementation, requires converting eosio names into symbol_codes:
     // const data = await this.eosRpc.get_table_by_scope({
