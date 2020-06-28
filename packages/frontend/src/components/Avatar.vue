@@ -15,12 +15,23 @@ export default class Avatar extends Vue {
   @Prop({ required: true })
   value!: string;
 
-  mounted() {
+  draw() {
     const win = window as {
       jdenticon?: { update: (element: Element, value: string) => void };
     };
     if (win.jdenticon) {
       win.jdenticon.update(this.$refs.frame as Element, this.value);
+    }
+  }
+
+  async mounted() {
+    if (document.readyState === "complete") {
+      this.draw();
+    } else {
+      await new Promise(r =>
+        window.addEventListener("load", r, { once: true })
+      );
+      this.draw();
     }
   }
 }
