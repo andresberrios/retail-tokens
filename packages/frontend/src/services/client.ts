@@ -61,6 +61,15 @@ interface TokenHolder {
   balance: string;
 }
 
+interface TransferData {
+  amount: number;
+  symbol: string;
+  from: string;
+  to: string;
+  quantity: string;
+  memo: string;
+}
+
 export default class BlockchainClient {
   rpc: Hyperion;
   eosRpc: JsonRpc;
@@ -87,13 +96,14 @@ export default class BlockchainClient {
     limit = 100,
     sort: "desc" | "asc" = "desc"
   ) {
-    return this.rpc.get_actions(account, {
+    const data = await this.rpc.get_actions<TransferData>(account, {
       "act.account": this.contract,
       "act.name": "transfer",
       skip,
       limit,
       sort
     });
+    return data.actions;
   }
 
   async getTokens(
