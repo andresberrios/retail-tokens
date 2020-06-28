@@ -66,7 +66,7 @@ export default class BlockchainClient {
   eosRpc: JsonRpc;
 
   constructor(
-    endpoint = process.env.VUE_APP_NODE_ENDPOINT as string,
+    endpoint = `${process.env.VUE_APP_NODE_PROTOCOL}://${process.env.VUE_APP_NODE_HOST}:${process.env.VUE_APP_NODE_PORT}`,
     public contract = process.env.VUE_APP_CONTRACT_ACCOUNT as string
   ) {
     this.rpc = new Hyperion(endpoint, { fetch });

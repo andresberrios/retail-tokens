@@ -1,7 +1,7 @@
 <template>
   <div>
     <b-navbar toggleable="lg" type="dark" variant="dark">
-      <b-navbar-brand :to="{ name: 'home' }">Santi's Project</b-navbar-brand>
+      <b-navbar-brand :to="{ name: 'home' }">{{ appName }}</b-navbar-brand>
       <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
 
       <b-collapse id="nav-collapse" is-nav>
@@ -29,7 +29,9 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 @Component
-export default class NavBar extends Vue {}
+export default class NavBar extends Vue {
+  appName = process.env.VUE_APP_NAME || "Retail Tokens";
+}
 </script>
 
 <style></style>
