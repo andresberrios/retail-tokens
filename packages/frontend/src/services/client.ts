@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/camelcase */
 
 import { JsonRpc as Hyperion } from "@eoscafe/hyperion";
-import { JsonRpc } from "eosjs";
+import { Api, JsonRpc } from "eosjs";
 
 interface ResultSet<RowType> {
   more: boolean;
@@ -72,14 +72,18 @@ interface TransferData {
 
 export default class BlockchainClient {
   rpc: Hyperion;
-  eosRpc: JsonRpc;
+  eos: Api | { rpc: JsonRpc };
 
   constructor(
     endpoint = `${process.env.VUE_APP_NODE_PROTOCOL}://${process.env.VUE_APP_NODE_HOST}:${process.env.VUE_APP_NODE_PORT}`,
     public contract = process.env.VUE_APP_CONTRACT_ACCOUNT as string
   ) {
     this.rpc = new Hyperion(endpoint, { fetch });
-    this.eosRpc = new JsonRpc(endpoint);
+    this.eos = { rpc: new JsonRpc(endpoint) };
+  }
+
+  get hasEos() {
+    return "signatureProvider" in this.eos;
   }
 
   validatePreviousResultSet(set?: ResultSet<unknown>) {
@@ -113,7 +117,7 @@ export default class BlockchainClient {
     this.validatePreviousResultSet(previousSet);
     const data: ResultSet<{
       balance: string;
-    }> = await this.eosRpc.get_table_rows({
+    }> = await this.eos.rpc.get_table_rows({
       json: true,
       code: this.contract,
       scope: account,
@@ -151,7 +155,7 @@ export default class BlockchainClient {
     const data: {
       more: string;
       rows: Array<{ scope: string }>;
-    } = await this.eosRpc.get_table_by_scope({
+    } = await this.eos.rpc.get_table_by_scope({
       code: this.contract,
       table: "accounts",
       lower_bound: previousSet && previousSet.next_key

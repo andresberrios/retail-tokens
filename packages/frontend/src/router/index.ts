@@ -29,7 +29,8 @@ const router = new VueRouter({
 
 router.afterEach(to => {
   Vue.nextTick(() => {
-    document.title = to.meta.title || to.name || "frontend";
+    document.title =
+      to.meta.title || to.name || process.env.VUE_APP_NAME || "frontend";
   });
 });
 

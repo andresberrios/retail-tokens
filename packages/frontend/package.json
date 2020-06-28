@@ -9,9 +9,12 @@
   },
   "dependencies": {
     "@eoscafe/hyperion": "^3.2.5",
+    "@scatterjs/core": "^2.7.53",
+    "@scatterjs/eosjs2": "^1.5.35",
     "bootstrap": "^4.5.0",
     "bootstrap-vue": "^2.15.0",
     "core-js": "^3.6.5",
+    "eosjs": "^20.0.0",
     "vue": "^2.6.11",
     "vue-class-component": "^7.2.3",
     "vue-property-decorator": "^8.4.2",

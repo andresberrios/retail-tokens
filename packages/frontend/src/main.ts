@@ -10,12 +10,15 @@ import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap-vue/dist/bootstrap-vue.css";
 
 import BlockchainClient from "./services/client";
-Vue.prototype.$client = new BlockchainClient();
 declare module "vue/types/vue" {
   interface Vue {
     $client: BlockchainClient;
   }
+  interface VueConstructor {
+    $client: BlockchainClient;
+  }
 }
+Vue.$client = Vue.prototype.$client = new BlockchainClient();
 
 Vue.config.productionTip = false;
 
