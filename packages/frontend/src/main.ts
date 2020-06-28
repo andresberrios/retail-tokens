@@ -9,6 +9,9 @@ Vue.use(IconsPlugin);
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap-vue/dist/bootstrap-vue.css";
 
+import BlockchainClient from "./services/client";
+Vue.prototype.$client = new BlockchainClient();
+
 Vue.config.productionTip = false;
 
 new Vue({
