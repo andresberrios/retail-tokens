@@ -7,9 +7,6 @@
             :to="{ name: 'account', params: { account: user.name } }"
           >
             <Avatar size="2em" :value="user.name" />
-            <!-- <b-avatar size="2em">
-              <svg :data-jdenticon-value="user.name" width="2em" height="2em" />
-            </b-avatar> -->
             {{ user.name }}
           </router-link>
           <b-icon icon="arrow-right"></b-icon>

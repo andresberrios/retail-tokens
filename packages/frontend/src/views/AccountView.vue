@@ -4,7 +4,7 @@
       <Avatar size="4em" :value="account" />
       <span class="mr-auto">{{ account }}</span>
     </b-container>
-    <TokenBalances />
+    <TokenBalances :account="account" />
     <UserList />
     <TransactionHistory :account="account" />
   </div>
