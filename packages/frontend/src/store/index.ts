@@ -6,22 +6,34 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    account: null
+    account: null,
+    allTokens: null
+  },
+  getters: {
+    loggedIn(state) {
+      return state.account !== null;
+    }
   },
   mutations: {
     setAccount(state, account) {
       state.account = account;
+    },
+    setAllTokens(state, tokens) {
+      state.allTokens = tokens;
     }
   },
   actions: {
-    async pairScatter({ commit, dispatch }) {
+    async pairScatter({ commit }) {
       const { account, eos } = await connectScatter();
-      Vue.$client.eos = eos;
+      Vue.$client.setEos(eos);
       commit("setAccount", account);
-      dispatch("loadAccountType");
     },
-    async loadAccountType() {
-      // Implement it
+    logOut({ commit }) {
+      Vue.$client.unsetEos();
+      commit("setAccount", null);
+    },
+    async loadAllTokens({ commit }) {
+      commit("setAllTokens", await Vue.$client.getAllTokens());
     }
   }
 });

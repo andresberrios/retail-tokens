@@ -72,18 +72,26 @@ interface TransferData {
 
 export default class BlockchainClient {
   rpc: Hyperion;
-  eos: Api | { rpc: JsonRpc };
+  eos!: Api | { rpc: JsonRpc };
 
   constructor(
     endpoint = `${process.env.VUE_APP_NODE_PROTOCOL}://${process.env.VUE_APP_NODE_HOST}:${process.env.VUE_APP_NODE_PORT}`,
     public contract = process.env.VUE_APP_CONTRACT_ACCOUNT as string
   ) {
     this.rpc = new Hyperion(endpoint, { fetch });
-    this.eos = { rpc: new JsonRpc(endpoint) };
+    this.unsetEos();
   }
 
   get hasEos() {
     return "signatureProvider" in this.eos;
+  }
+
+  setEos(eos: Api) {
+    this.eos = eos;
+  }
+
+  unsetEos() {
+    this.eos = { rpc: new JsonRpc(this.rpc.endpoint) };
   }
 
   validatePreviousResultSet(set?: ResultSet<unknown>) {
