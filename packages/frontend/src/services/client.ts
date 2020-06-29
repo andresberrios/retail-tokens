@@ -4,13 +4,13 @@ import { JsonRpc as Hyperion } from "@eoscafe/hyperion";
 import { Api, JsonRpc } from "eosjs";
 import { SerialBuffer } from "eosjs/dist/eosjs-serialize";
 
-interface ResultSet<RowType> {
+export interface ResultSet<RowType> {
   more: boolean;
   next_key: string;
   rows: RowType[];
 }
 
-class TraversableResultSet<RowType> implements ResultSet<RowType> {
+export class TraversableResultSet<RowType> implements ResultSet<RowType> {
   more = false;
   next_key = "";
   rows: RowType[] = [];
@@ -52,17 +52,17 @@ class TraversableResultSet<RowType> implements ResultSet<RowType> {
   }
 }
 
-interface HolderBalances {
+export interface HolderBalances {
   account: string;
   balances: string[];
 }
 
-interface TokenHolder {
+export interface TokenHolder {
   account: string;
   balance: string;
 }
 
-interface TransferData {
+export interface TransferData {
   amount: number;
   symbol: string;
   from: string;
@@ -71,7 +71,7 @@ interface TransferData {
   memo: string;
 }
 
-interface TokenStats {
+export interface TokenStats {
   symbol: string;
   supply: string;
   max_supply: string;
@@ -148,7 +148,7 @@ export default class BlockchainClient {
 
   async getAllTokens(
     previousSet?: ResultSet<string>
-  ): Promise<ResultSet<string>> {
+  ): Promise<TraversableResultSet<string>> {
     this.validatePreviousResultSet(previousSet);
     const data: {
       more: string;
@@ -177,7 +177,7 @@ export default class BlockchainClient {
 
   async getAllTokenStats(
     previousSet?: ResultSet<TokenStats>
-  ): Promise<ResultSet<TokenStats>> {
+  ): Promise<TraversableResultSet<TokenStats>> {
     this.validatePreviousResultSet(previousSet);
     const data = await this.getAllTokens(
       previousSet ? { ...previousSet, rows: [] } : undefined

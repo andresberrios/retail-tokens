@@ -1,10 +1,17 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import { connectScatter } from "./scatter";
+import { TokenStats } from "../services/client";
 
 Vue.use(Vuex);
 
-export default new Vuex.Store({
+export default new Vuex.Store<{
+  account: {
+    actor: string;
+    permission: string;
+  } | null;
+  allTokens: TokenStats[] | null;
+}>({
   state: {
     account: null,
     allTokens: null
@@ -12,6 +19,9 @@ export default new Vuex.Store({
   getters: {
     loggedIn(state) {
       return state.account !== null;
+    },
+    accountIsRetailer(state) {
+      return !!state.allTokens?.find(t => t.issuer === state.account?.actor);
     }
   },
   mutations: {
@@ -33,7 +43,9 @@ export default new Vuex.Store({
       commit("setAccount", null);
     },
     async loadAllTokens({ commit }) {
-      commit("setAllTokens", await Vue.$client.getAllTokens());
+      const results = await Vue.$client.getAllTokenStats();
+      await results.fetchRest();
+      commit("setAllTokens", results.rows);
     }
   }
 });
