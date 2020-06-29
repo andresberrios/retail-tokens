@@ -2,6 +2,7 @@
 
 import { JsonRpc as Hyperion } from "@eoscafe/hyperion";
 import { Api, JsonRpc } from "eosjs";
+import { SerialBuffer } from "eosjs/dist/eosjs-serialize";
 
 interface ResultSet<RowType> {
   more: boolean;
@@ -68,6 +69,13 @@ interface TransferData {
   to: string;
   quantity: string;
   memo: string;
+}
+
+interface TokenStats {
+  symbol: string;
+  supply: string;
+  max_supply: string;
+  issuer: string;
 }
 
 export default class BlockchainClient {
@@ -138,22 +146,60 @@ export default class BlockchainClient {
     );
   }
 
-  async getAllTokens() {
-    const { actions } = await this.rpc.get_actions<{ maximum_supply: string }>(
-      this.contract,
-      {
-        "act.account": this.contract,
-        "act.name": "create"
-      }
-    );
-    return actions.map(a => a.act.data.maximum_supply.split(" ")[1]);
+  async getAllTokens(
+    previousSet?: ResultSet<string>
+  ): Promise<ResultSet<string>> {
+    this.validatePreviousResultSet(previousSet);
+    const data: {
+      more: string;
+      rows: Array<{ scope: string }>;
+    } = await this.eos.rpc.get_table_by_scope({
+      code: "retailtokens",
+      table: "stat",
+      lower_bound: previousSet?.next_key
+    });
 
-    // Alternate implementation, requires converting eosio names into symbol_codes:
-    // const data = await this.eosRpc.get_table_by_scope({
-    //   code: "retailtokens",
-    //   table: "stat"
-    // });
-    // return data;
+    const tokens = data.rows.map(({ scope }) => {
+      const buffer = new SerialBuffer();
+      buffer.pushName(scope);
+      return buffer.getSymbolCode();
+    });
+
+    return new TraversableResultSet(
+      {
+        more: !!data.more,
+        next_key: data.more,
+        rows: tokens
+      },
+      set => this.getAllTokens(set)
+    );
+  }
+
+  async getAllTokenStats(
+    previousSet?: ResultSet<TokenStats>
+  ): Promise<ResultSet<TokenStats>> {
+    this.validatePreviousResultSet(previousSet);
+    const data = await this.getAllTokens(
+      previousSet ? { ...previousSet, rows: [] } : undefined
+    );
+
+    const stats: TokenStats[] = await Promise.all(
+      data.rows.map(async symbol => {
+        const s: {
+          [symbol: string]: {
+            supply: string;
+            max_supply: string;
+            issuer: string;
+          };
+        } = await this.eos.rpc.get_currency_stats(this.contract, symbol);
+        const [, details] = Object.entries(s)[0];
+        return { ...details, symbol };
+      })
+    );
+
+    return new TraversableResultSet({ ...data, rows: stats }, set =>
+      this.getAllTokenStats(set)
+    );
   }
 
   async getAllTokenHolders(
