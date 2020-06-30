@@ -8,7 +8,7 @@
     <div v-else>
       <b-container class="my-5">
         <div>
-          <Avatar size="4em" :value="account" />
+          <Avatar size="4em" :value="account" type="account" />
           <span class="mx-2">{{ account }}</span>
         </div>
         <TokenBalances :account="account" />

@@ -8,7 +8,12 @@
       <b-row>
         <b-col v-for="token in tokens" :key="token">
           <span>{{ token }}</span>
-          <Avatar class="mx-1" size="1.5em" :value="token.split(' ')[1]" />
+          <Avatar
+            class="mx-1"
+            size="1.5em"
+            :value="token.split(' ')[1]"
+            type="token"
+          />
         </b-col>
       </b-row>
     </div>

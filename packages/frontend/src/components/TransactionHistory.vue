@@ -1,8 +1,5 @@
 <template>
   <div>
-    <!-- <div v-if="loading" class="d-flex justify-content-center m-5">
-      <b-spinner large variant="dark" label="Loading..."></b-spinner>
-    </div> -->
     <div class="my-5">
       <div class="my-2 mx-1">Transactions</div>
       <b-table
@@ -25,7 +22,7 @@
           <router-link
             :to="{ name: 'account', params: { account: data.value } }"
           >
-            <Avatar size="2em" :value="data.value" />
+            <Avatar size="2em" :value="data.value" type="account" />
             {{ data.value }}
           </router-link>
         </template>
@@ -33,13 +30,13 @@
           <router-link
             :to="{ name: 'account', params: { account: data.value } }"
           >
-            <Avatar size="2em" :value="data.value" />
+            <Avatar size="2em" :value="data.value" type="account" />
             {{ data.value }}
           </router-link>
         </template>
         <template v-slot:cell(amount)="data">
           {{ data.value }}
-          <Avatar size="2em" :value="data.value" />
+          <Avatar size="2em" :value="data.value" type="token" />
         </template>
       </b-table>
     </div>

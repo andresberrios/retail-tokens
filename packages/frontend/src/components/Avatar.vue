@@ -1,5 +1,10 @@
 <template>
-  <b-avatar variant="dark" rounded :size="size">
+  <b-avatar
+    variant="dark"
+    :size="size"
+    :rounded="type === 'account'"
+    :class="{ token: type === 'token' }"
+  >
     <svg ref="frame" :width="size" :height="size" />
   </b-avatar>
 </template>
@@ -14,6 +19,9 @@ export default class Avatar extends Vue {
 
   @Prop({ required: true })
   value!: string;
+
+  @Prop({ default: "account" })
+  type!: "account" | "token";
 
   draw() {
     const win = window as {
@@ -37,4 +45,8 @@ export default class Avatar extends Vue {
 }
 </script>
 
-<style></style>
+<style scoped>
+.token {
+  border: solid gold 2px;
+}
+</style>
