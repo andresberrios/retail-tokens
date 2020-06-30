@@ -1,16 +1,26 @@
 <template>
   <div>
-    <b-container class="my-5">
-      <div>Transactions</div>
+    <!-- <div v-if="loading" class="d-flex justify-content-center m-5">
+      <b-spinner large variant="dark" label="Loading..."></b-spinner>
+    </div> -->
+    <div class="my-5">
+      <div class="my-2 mx-1">Transactions</div>
       <b-table
         hover
         :items="items"
         :fields="fields"
         :bordered="true"
+        :busy="loading"
         head-variant="dark"
         table-variant="dark"
         stacked="sm"
       >
+        <template v-slot:table-busy>
+          <div class="text-center text-light my-2">
+            <b-spinner variant="light" class="align-middle"></b-spinner>
+            <strong>Loading...</strong>
+          </div>
+        </template>
         <template v-slot:cell(from)="data">
           <router-link
             :to="{ name: 'account', params: { account: data.value } }"
@@ -27,8 +37,12 @@
             {{ data.value }}
           </router-link>
         </template>
+        <template v-slot:cell(amount)="data">
+          {{ data.value }}
+          <Avatar size="2em" :value="data.value" />
+        </template>
       </b-table>
-    </b-container>
+    </div>
   </div>
 </template>
 
@@ -53,6 +67,8 @@ export default class TransactionHistory extends Vue {
     memo: string;
   }> | null = null;
 
+  loading = true;
+
   @Watch("account", { immediate: true })
   async loadHistory() {
     const actions = await this.$client.getTransfers(this.account);
@@ -64,6 +80,7 @@ export default class TransactionHistory extends Vue {
       amount: a.act.data.quantity,
       memo: a.act.data.memo
     }));
+    this.loading = false;
   }
 }
 </script>

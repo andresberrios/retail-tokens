@@ -1,18 +1,20 @@
 <template>
   <div>
-    <div v-if="loading">
-      <b-spinner label="Spinning"></b-spinner>
-      Loading...
+    <div v-if="loading" class="d-flex justify-content-center m-5">
+      <b-spinner large variant="dark" label="Loading..."></b-spinner>
+      <strong class="color: grey; mx-2">Loading...</strong>
     </div>
     <div v-else-if="accountNotFound"></div>
     <div v-else>
       <b-container class="my-5">
-        <Avatar size="4em" :value="account" />
-        <span class="mr-auto">{{ account }}</span>
+        <div>
+          <Avatar size="4em" :value="account" />
+          <span class="mx-2">{{ account }}</span>
+        </div>
+        <TokenBalances :account="account" />
+        <UserList />
+        <TransactionHistory :account="account" />
       </b-container>
-      <TokenBalances :account="account" />
-      <UserList />
-      <TransactionHistory :account="account" />
     </div>
   </div>
 </template>

@@ -1,13 +1,17 @@
 <template>
   <div>
-    <b-container class="my-5">
+    <div v-if="loading">
+      <b-spinner label="Spinning"></b-spinner>
+      Loading...
+    </div>
+    <div v-else class="d-flex my-5">
       <b-row>
         <b-col v-for="token in tokens" :key="token">
           <span>{{ token }}</span>
-          <Avatar size="1.5em" :value="token.split(' ')[1]" />
+          <Avatar class="mx-1" size="1.5em" :value="token.split(' ')[1]" />
         </b-col>
       </b-row>
-    </b-container>
+    </div>
   </div>
 </template>
 
@@ -23,12 +27,14 @@ export default class TokenBalances extends Vue {
   account!: string;
 
   tokens: string[] | null = null;
+  loading = true;
 
   @Watch("account", { immediate: true })
   async loadBalances() {
     const data = await this.$client.getTokens(this.account);
     await data.fetchRest();
     this.tokens = data.rows;
+    this.loading = false;
   }
 }
 </script>

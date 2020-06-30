@@ -1,19 +1,25 @@
 <template>
   <div>
-    <b-container>
-      <b-list-group>
-        <b-list-group-item v-for="user in users" :key="user.id">
-          <router-link
-            :to="{ name: 'account', params: { account: user.name } }"
-          >
-            <Avatar size="2em" :value="user.name" />
-            {{ user.name }}
-          </router-link>
-          <b-icon icon="arrow-right"></b-icon>
-          <span class="mx-2">{{ user.amount }}</span>
-        </b-list-group-item>
-      </b-list-group>
-    </b-container>
+    <div v-if="loading">
+      <b-spinner label="Spinning"></b-spinner>
+      Loading...
+    </div>
+    <div v-else>
+      <b-container>
+        <b-list-group>
+          <b-list-group-item v-for="user in users" :key="user.id">
+            <router-link
+              :to="{ name: 'account', params: { account: user.name } }"
+            >
+              <Avatar size="2em" :value="user.name" />
+              {{ user.name }}
+            </router-link>
+            <b-icon icon="arrow-right"></b-icon>
+            <span class="mx-2">{{ user.amount }}</span>
+          </b-list-group-item>
+        </b-list-group>
+      </b-container>
+    </div>
   </div>
 </template>
 
@@ -32,6 +38,13 @@ export default class UserList extends Vue {
     { name: "ohyeaah", id: "42345", amount: "3.0000 RTO" },
     { name: "tokenlover", id: "52345", amount: "1.0000 RTO" }
   ];
+
+  loading = true;
+
+  async mounted() {
+    await new Promise(r => setTimeout(r, 1000));
+    this.loading = false;
+  }
 }
 </script>
 
