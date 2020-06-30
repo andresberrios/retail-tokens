@@ -6,11 +6,12 @@
 
       <b-collapse id="nav-collapse" is-nav>
         <b-navbar-nav class="ml-auto">
-          <b-nav-form>
+          <b-nav-form @submit.prevent="goToAccount(searchedAccount)">
             <b-form-input
               size="md"
               class="mr-sm-2"
-              placeholder="Search by account / token"
+              placeholder="Search account"
+              v-model="searchedAccount"
             ></b-form-input>
             <b-button size="md" class="my-2 my-sm-0" type="submit">
               Search
@@ -31,6 +32,12 @@ import { Component, Vue } from "vue-property-decorator";
 @Component
 export default class NavBar extends Vue {
   appName = process.env.VUE_APP_NAME || "Retail Tokens";
+
+  searchedAccount = "";
+
+  goToAccount(account: string) {
+    this.$router.push({ name: "account", params: { account } });
+  }
 }
 </script>
 
