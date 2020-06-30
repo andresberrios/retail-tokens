@@ -1,12 +1,19 @@
 <template>
   <div>
-    <b-container class="my-5">
-      <Avatar size="4em" :value="account" />
-      <span class="mr-auto">{{ account }}</span>
-    </b-container>
-    <TokenBalances :account="account" />
-    <UserList />
-    <TransactionHistory :account="account" />
+    <div v-if="loading">
+      <b-spinner label="Spinning"></b-spinner>
+      Loading...
+    </div>
+    <div v-else-if="accountNotFound"></div>
+    <div v-else>
+      <b-container class="my-5">
+        <Avatar size="4em" :value="account" />
+        <span class="mr-auto">{{ account }}</span>
+      </b-container>
+      <TokenBalances :account="account" />
+      <UserList />
+      <TransactionHistory :account="account" />
+    </div>
   </div>
 </template>
 
@@ -23,6 +30,15 @@ import Avatar from "../components/Avatar.vue";
 export default class AccountView extends Vue {
   @Prop({ required: true })
   account!: string;
+
+  accountNotFound = false;
+  loading = true;
+
+  async mounted() {
+    // Check if account exists
+    await new Promise(r => setTimeout(r, 3000));
+    this.loading = false;
+  }
 }
 </script>
 
