@@ -2,67 +2,24 @@
   <div>
     <div class="my-5">
       <h4>Transactions</h4>
-      <b-table
-        hover
-        :items="items"
-        :fields="fields"
-        :bordered="true"
-        :busy="loading"
-        head-variant="dark"
-        table-variant="dark"
-        stacked="sm"
-      >
-        <template v-slot:table-busy>
-          <div class="text-center text-light my-2">
-            <b-spinner variant="light" class="align-middle"></b-spinner>
-            <strong>Loading...</strong>
-          </div>
-        </template>
-        <template v-slot:cell(from)="data">
-          <router-link
-            :to="{ name: 'account', params: { account: data.value } }"
-          >
-            <Avatar size="2em" :value="data.value" type="account" />
-            {{ data.value }}
-          </router-link>
-        </template>
-        <template v-slot:cell(to)="data">
-          <router-link
-            :to="{ name: 'account', params: { account: data.value } }"
-          >
-            <Avatar size="2em" :value="data.value" type="account" />
-            {{ data.value }}
-          </router-link>
-        </template>
-        <template v-slot:cell(amount)="data">
-          {{ data.value }}
-          <Avatar size="1.5em" :value="data.value.split(' ')[1]" type="token" />
-        </template>
-      </b-table>
+      <TransfersTable :transfers="items" :loading="loading" />
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue, Prop, Watch } from "vue-property-decorator";
-import Avatar from "../components/Avatar.vue";
+import Avatar from "./Avatar.vue";
+import TransfersTable, { Transfer } from "./TransfersTable.vue";
 
 @Component({
-  components: { Avatar }
+  components: { Avatar, TransfersTable }
 })
 export default class TransactionHistory extends Vue {
   @Prop({ required: true })
   account!: string;
 
-  fields = [{ label: "ID", key: "id" }, "date", "from", "to", "amount", "memo"];
-  items: Array<{
-    id: string;
-    date: string;
-    from: string;
-    to: string;
-    amount: string;
-    memo: string;
-  }> | null = null;
+  items: Transfer[] | null = null;
 
   loading = true;
 
