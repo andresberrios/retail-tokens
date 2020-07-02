@@ -12,6 +12,12 @@
 <script lang="ts">
 import { Component, Vue, Prop } from "vue-property-decorator";
 
+declare global {
+  interface Window {
+    jdenticon: { update: (element: Element, value: string) => void };
+  }
+}
+
 @Component
 export default class Avatar extends Vue {
   @Prop({ required: true })
@@ -24,11 +30,8 @@ export default class Avatar extends Vue {
   type!: "account" | "token";
 
   draw() {
-    const win = window as {
-      jdenticon?: { update: (element: Element, value: string) => void };
-    };
-    if (win.jdenticon) {
-      win.jdenticon.update(this.$refs.frame as Element, this.value);
+    if (window.jdenticon) {
+      window.jdenticon.update(this.$refs.frame as Element, this.value);
     }
   }
 
