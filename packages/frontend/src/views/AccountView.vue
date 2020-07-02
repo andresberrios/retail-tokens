@@ -18,7 +18,9 @@
                 <TokenBalances :account="account" />
                 <TransactionHistory :account="account" />
               </b-tab>
-              <b-tab title="Token History"> </b-tab>
+              <b-tab title="Token History">
+                <TokenHistory :account="account" />
+              </b-tab>
               <b-tab title="User List">
                 <UserList />
               </b-tab>
@@ -34,11 +36,18 @@
 import { Component, Vue, Prop } from "vue-property-decorator";
 import TokenBalances from "../components/TokenBalances.vue";
 import TransactionHistory from "../components/TransactionHistory.vue";
+import TokenHistory from "../components/TokenHistory.vue";
 import UserList from "../components/UserList.vue";
 import Avatar from "../components/Avatar.vue";
 
 @Component({
-  components: { TokenBalances, TransactionHistory, UserList, Avatar }
+  components: {
+    TokenBalances,
+    TransactionHistory,
+    TokenHistory,
+    UserList,
+    Avatar
+  }
 })
 export default class AccountView extends Vue {
   @Prop({ required: true })

@@ -14,11 +14,11 @@ import NavBar from "../src/components/NavBar.vue";
 @Component({
   components: { NavBar }
 })
-export default class App extends Vue {}
+export default class App extends Vue {
+  async mounted() {
+    await this.$store.dispatch("loadAllTokens");
+  }
+}
 </script>
 
-<style>
-/* #app {
-  background-color: #6c757c;
-} */
-</style>
+<style></style>
