@@ -78,6 +78,28 @@ export interface TokenStats {
   issuer: string;
 }
 
+interface AccountPermission {
+  perm_name: string;
+  parent: string;
+  required_auth: {
+    threshold: number;
+    keys: [
+      {
+        key: string;
+        weight: number;
+      }
+    ];
+    accounts: unknown[];
+    waits: unknown[];
+  };
+}
+
+interface AccountInfo {
+  account_name: string;
+  created: string;
+  permissions: AccountPermission[];
+}
+
 export default class BlockchainClient {
   rpc: Hyperion;
   eos!: Api | { rpc: JsonRpc };
@@ -100,6 +122,18 @@ export default class BlockchainClient {
 
   unsetEos() {
     this.eos = { rpc: new JsonRpc(this.rpc.endpoint) };
+  }
+
+  async getAccountInfo(account: string): Promise<AccountInfo | undefined> {
+    try {
+      return await this.eos.rpc.get_account(account);
+    } catch (error) {
+      return undefined;
+    }
+  }
+
+  async accountExists(account: string): Promise<boolean> {
+    return (await this.getAccountInfo(account)) !== undefined;
   }
 
   validatePreviousResultSet(set?: ResultSet<unknown>) {
