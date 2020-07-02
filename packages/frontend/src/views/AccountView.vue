@@ -11,9 +11,20 @@
           <Avatar size="4em" :value="account" type="account" />
           <span class="mx-2">{{ account }}</span>
         </div>
-        <TokenBalances :account="account" />
-        <UserList />
-        <TransactionHistory :account="account" />
+        <div class="tabs my-5">
+          <b-card no-body>
+            <b-tabs card>
+              <b-tab title="Account">
+                <TokenBalances :account="account" />
+                <TransactionHistory :account="account" />
+              </b-tab>
+              <b-tab title="Token History"> </b-tab>
+              <b-tab title="User List">
+                <UserList />
+              </b-tab>
+            </b-tabs>
+          </b-card>
+        </div>
       </b-container>
     </div>
   </div>

@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="my-5">
-      <div class="my-2 mx-1">Transactions</div>
+      <h4>Transactions</h4>
       <b-table
         hover
         :items="items"
@@ -36,7 +36,7 @@
         </template>
         <template v-slot:cell(amount)="data">
           {{ data.value }}
-          <Avatar size="2em" :value="data.value" type="token" />
+          <Avatar size="1.5em" :value="data.value.split(' ')[1]" type="token" />
         </template>
       </b-table>
     </div>

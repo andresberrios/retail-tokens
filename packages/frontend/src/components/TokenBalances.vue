@@ -4,18 +4,23 @@
       <b-spinner label="Spinning"></b-spinner>
       Loading...
     </div>
-    <div v-else class="d-flex my-5">
-      <b-row>
-        <b-col v-for="token in tokens" :key="token">
-          <span>{{ token }}</span>
-          <Avatar
-            class="mx-1"
-            size="1.5em"
-            :value="token.split(' ')[1]"
-            type="token"
-          />
-        </b-col>
-      </b-row>
+    <div v-else>
+      <h4>Token Balance</h4>
+      <b-card>
+        <div class="d-flex my-3">
+          <b-row>
+            <b-col v-for="token in tokens" :key="token">
+              <span>{{ token }}</span>
+              <Avatar
+                class="mx-1"
+                size="1.5em"
+                :value="token.split(' ')[1]"
+                type="token"
+              />
+            </b-col>
+          </b-row>
+        </div>
+      </b-card>
     </div>
   </div>
 </template>
