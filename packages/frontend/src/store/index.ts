@@ -20,8 +20,14 @@ export default new Vuex.Store<{
     loggedIn(state) {
       return state.account !== null;
     },
-    accountIsRetailer(state) {
-      return !!state.allTokens?.find(t => t.issuer === state.account?.actor);
+    getIssuedToken: state => (account: string) => {
+      return state.allTokens?.find(t => t.issuer === account);
+    },
+    accountIsRetailer: (state, getters) => (account: string) => {
+      return !!getters.getIssuedToken(account);
+    },
+    currentAccountIsRetailer(state, getters) {
+      return getters.accountIsRetailer(state.account?.actor);
     }
   },
   mutations: {
