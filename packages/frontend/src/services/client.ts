@@ -110,7 +110,7 @@ export default class BlockchainClient {
     }
   }
 
-  async getTransfers(
+  async getAccountTransfers(
     account: string,
     skip = 0,
     limit = 100,
@@ -119,6 +119,23 @@ export default class BlockchainClient {
     const data = await this.rpc.get_actions<TransferData>(account, {
       "act.account": this.contract,
       "act.name": "transfer",
+      skip,
+      limit,
+      sort
+    });
+    return data.actions;
+  }
+
+  async getTokenTransfers(
+    symbol: string,
+    skip = 0,
+    limit = 100,
+    sort: "desc" | "asc" = "desc"
+  ) {
+    const data = await this.rpc.get_actions<TransferData>(this.contract, {
+      "act.account": this.contract,
+      "act.name": "transfer",
+      "transfer.symbol": symbol,
       skip,
       limit,
       sort
