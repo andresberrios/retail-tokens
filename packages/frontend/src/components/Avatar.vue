@@ -10,13 +10,8 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from "vue-property-decorator";
-
-declare global {
-  interface Window {
-    jdenticon: { update: (element: Element, value: string) => void };
-  }
-}
+import { Component, Vue, Prop, Watch } from "vue-property-decorator";
+import { update } from "jdenticon";
 
 @Component
 export default class Avatar extends Vue {
@@ -29,21 +24,10 @@ export default class Avatar extends Vue {
   @Prop({ default: "account" })
   type!: "account" | "token";
 
-  draw() {
-    if (window.jdenticon) {
-      window.jdenticon.update(this.$refs.frame as Element, this.value);
-    }
-  }
-
-  async mounted() {
-    if (document.readyState === "complete") {
-      this.draw();
-    } else {
-      await new Promise(r =>
-        window.addEventListener("load", r, { once: true })
-      );
-      this.draw();
-    }
+  @Watch("value", { immediate: true })
+  async valueChanged() {
+    await this.$nextTick();
+    update(this.$refs.frame as HTMLElement, this.value);
   }
 }
 </script>
