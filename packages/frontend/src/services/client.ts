@@ -107,8 +107,8 @@ export default class BlockchainClient {
   session?: LinkSession;
 
   constructor(
-    endpoint = process.env.VUE_APP_CHAIN_NODE,
-    public contract = process.env.VUE_APP_CONTRACT_ACCOUNT as string
+    endpoint = process.env.VUE_APP_CHAIN_NODE || "http://localhost:8080",
+    public contract = process.env.VUE_APP_CONTRACT_ACCOUNT || "retailtokens"
   ) {
     this.hyp = new Hyperion(endpoint, { fetch });
     this.rpc = new JsonRpc(this.hyp.endpoint);

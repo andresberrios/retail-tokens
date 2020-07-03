@@ -1,6 +1,8 @@
 import AnchorLink from "anchor-link";
 import AnchorLinkBrowserTransport from "anchor-link-browser-transport";
 
+const appName = process.env.VUA_APP_NAME || "frontend";
+
 const transport = new AnchorLinkBrowserTransport();
 const link = new AnchorLink({
   transport,
@@ -9,9 +11,9 @@ const link = new AnchorLink({
 });
 
 export async function connectAnchor() {
-  return link.login(process.env.VUE_APP_NAME);
+  return link.login(appName);
 }
 
 export async function restoreAnchorSession() {
-  return link.restoreSession(process.env.VUE_APP_NAME);
+  return link.restoreSession(appName);
 }
