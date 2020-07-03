@@ -28,7 +28,8 @@ export default class TokenHistory extends Vue {
     return { account: this.account, allTokens: this.$store.state.allTokens };
   }
 
-  @Watch("accountAndAllTokens", { immediate: true, deep: true })
+  @Watch("account")
+  @Watch("$store.state.allTokens", { immediate: true })
   async loadHistory() {
     const token: TokenStats | undefined = this.$store.getters.getIssuedToken(
       this.account
@@ -48,5 +49,3 @@ export default class TokenHistory extends Vue {
   }
 }
 </script>
-
-<style></style>
