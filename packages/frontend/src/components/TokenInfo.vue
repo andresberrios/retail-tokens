@@ -5,7 +5,7 @@
         <TokenHistory :token="token" />
       </b-tab>
       <b-tab title="User List">
-        <UserList />
+        <UserList :token="token" />
       </b-tab>
       <b-tab title="Registered Users">
         <RegisteredUsers />

@@ -7,15 +7,15 @@
     <div v-else>
       <b-container>
         <b-list-group>
-          <b-list-group-item v-for="user in users" :key="user.id">
+          <b-list-group-item v-for="user in users" :key="user.account">
             <router-link
-              :to="{ name: 'account', params: { account: user.name } }"
+              :to="{ name: 'account', params: { account: user.account } }"
             >
-              <Avatar size="2em" :value="user.name" />
-              {{ user.name }}
+              <Avatar size="2em" :value="user.account" />
+              {{ user.account }}
             </router-link>
             <b-icon icon="arrow-right"></b-icon>
-            <span class="mx-2">{{ user.amount }}</span>
+            <span class="mx-2">{{ user.balance }}</span>
           </b-list-group-item>
         </b-list-group>
       </b-container>
@@ -24,25 +24,25 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import { Component, Vue, Prop, Watch } from "vue-property-decorator";
 import Avatar from "../components/Avatar.vue";
+import { TokenHolder } from "../services/client";
 
 @Component({
   components: { Avatar }
 })
 export default class UserList extends Vue {
-  users: unknown[] = [
-    { name: "chanchibon", id: "12345", amount: "2.0000 RTO" },
-    { name: "chiquipiqui", id: "11112", amount: "5.0000 RTO" },
-    { name: "coolioboy", id: "22345", amount: "6.0000 RTO" },
-    { name: "ohyeaah", id: "42345", amount: "3.0000 RTO" },
-    { name: "tokenlover", id: "52345", amount: "1.0000 RTO" }
-  ];
+  @Prop({ required: true })
+  token!: string;
+
+  users: TokenHolder[] | null = null;
 
   loading = true;
 
-  async mounted() {
-    await new Promise(r => setTimeout(r, 1000));
+  @Watch("token", { immediate: true })
+  async loadUsers() {
+    const tokenHolders = await this.$client.getTokenHolders(this.token);
+    this.users = tokenHolders.rows;
     this.loading = false;
   }
 }
