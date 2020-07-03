@@ -9,8 +9,8 @@
   },
   "dependencies": {
     "@eoscafe/hyperion": "^3.2.5",
-    "@scatterjs/core": "^2.7.53",
-    "@scatterjs/eosjs2": "^1.5.35",
+    "anchor-link": "^2.1.2",
+    "anchor-link-browser-transport": "^2.1.1",
     "bootstrap": "^4.5.0",
     "bootstrap-vue": "^2.15.0",
     "core-js": "^3.6.5",

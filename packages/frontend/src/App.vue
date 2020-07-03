@@ -16,7 +16,10 @@ import NavBar from "../src/components/NavBar.vue";
 })
 export default class App extends Vue {
   async mounted() {
-    await this.$store.dispatch("loadAllTokens");
+    await Promise.all([
+      this.$store.dispatch("loadAllTokens"),
+      this.$store.dispatch("restoreSession")
+    ]);
   }
 }
 </script>

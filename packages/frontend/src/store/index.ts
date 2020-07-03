@@ -1,6 +1,6 @@
 import Vue from "vue";
 import Vuex from "vuex";
-import { connectScatter } from "./scatter";
+import { connectAnchor, restoreAnchorSession } from "./anchor";
 import { TokenStats } from "../services/client";
 
 Vue.use(Vuex);
@@ -40,12 +40,20 @@ export default new Vuex.Store<{
   },
   actions: {
     async logIn({ commit }) {
-      const { account, eos } = await connectScatter();
-      Vue.$client.setEos(eos);
-      commit("setAccount", account);
+      const result = await connectAnchor();
+      Vue.$client.session = result.session;
+      commit("setAccount", result.session.auth);
+    },
+    async restoreSession({ commit }) {
+      const session = await restoreAnchorSession();
+      if (session) {
+        Vue.$client.session = session;
+        commit("setAccount", session.auth);
+      }
     },
     logOut({ commit }) {
-      Vue.$client.unsetEos();
+      Vue.$client.session?.remove();
+      delete Vue.$client.session;
       commit("setAccount", null);
     },
     async loadAllTokens({ commit }) {

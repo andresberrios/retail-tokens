@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/camelcase */
 
 import { JsonRpc as Hyperion } from "@eoscafe/hyperion";
-import { Api, JsonRpc } from "eosjs";
+import { JsonRpc } from "eosjs";
 import { SerialBuffer } from "eosjs/dist/eosjs-serialize";
+import { LinkSession } from "anchor-link";
 
 export interface ResultSet<RowType> {
   more: boolean;
@@ -101,32 +102,21 @@ interface AccountInfo {
 }
 
 export default class BlockchainClient {
-  rpc: Hyperion;
-  eos!: Api | { rpc: JsonRpc };
+  hyp: Hyperion;
+  rpc: JsonRpc;
+  session?: LinkSession;
 
   constructor(
-    endpoint = `${process.env.VUE_APP_NODE_PROTOCOL}://${process.env.VUE_APP_NODE_HOST}:${process.env.VUE_APP_NODE_PORT}`,
+    endpoint = process.env.VUE_APP_CHAIN_NODE,
     public contract = process.env.VUE_APP_CONTRACT_ACCOUNT as string
   ) {
-    this.rpc = new Hyperion(endpoint, { fetch });
-    this.unsetEos();
-  }
-
-  get hasEos() {
-    return "signatureProvider" in this.eos;
-  }
-
-  setEos(eos: Api) {
-    this.eos = eos;
-  }
-
-  unsetEos() {
-    this.eos = { rpc: new JsonRpc(this.rpc.endpoint) };
+    this.hyp = new Hyperion(endpoint, { fetch });
+    this.rpc = new JsonRpc(this.hyp.endpoint);
   }
 
   async getAccountInfo(account: string): Promise<AccountInfo | undefined> {
     try {
-      return await this.eos.rpc.get_account(account);
+      return await this.rpc.get_account(account);
     } catch (error) {
       return undefined;
     }
@@ -150,7 +140,7 @@ export default class BlockchainClient {
     limit = 100,
     sort: "desc" | "asc" = "desc"
   ) {
-    const data = await this.rpc.get_actions<TransferData>(account, {
+    const data = await this.hyp.get_actions<TransferData>(account, {
       "act.account": this.contract,
       "act.name": "transfer",
       skip,
@@ -166,7 +156,7 @@ export default class BlockchainClient {
     limit = 100,
     sort: "desc" | "asc" = "desc"
   ) {
-    const data = await this.rpc.get_actions<TransferData>(this.contract, {
+    const data = await this.hyp.get_actions<TransferData>(this.contract, {
       "act.account": this.contract,
       "act.name": "transfer",
       "transfer.symbol": symbol,
@@ -184,7 +174,7 @@ export default class BlockchainClient {
     this.validatePreviousResultSet(previousSet);
     const data: ResultSet<{
       balance: string;
-    }> = await this.eos.rpc.get_table_rows({
+    }> = await this.rpc.get_table_rows({
       json: true,
       code: this.contract,
       scope: account,
@@ -204,7 +194,7 @@ export default class BlockchainClient {
     const data: {
       more: string;
       rows: Array<{ scope: string }>;
-    } = await this.eos.rpc.get_table_by_scope({
+    } = await this.rpc.get_table_by_scope({
       code: "retailtokens",
       table: "stat",
       lower_bound: previousSet?.next_key
@@ -242,7 +232,7 @@ export default class BlockchainClient {
             max_supply: string;
             issuer: string;
           };
-        } = await this.eos.rpc.get_currency_stats(this.contract, symbol);
+        } = await this.rpc.get_currency_stats(this.contract, symbol);
         const [, details] = Object.entries(s)[0];
         return { ...details, symbol };
       })
@@ -260,7 +250,7 @@ export default class BlockchainClient {
     const data: {
       more: string;
       rows: Array<{ scope: string }>;
-    } = await this.eos.rpc.get_table_by_scope({
+    } = await this.rpc.get_table_by_scope({
       code: this.contract,
       table: "accounts",
       lower_bound: previousSet && previousSet.next_key
