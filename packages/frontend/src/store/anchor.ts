@@ -1,4 +1,4 @@
-import AnchorLink from "anchor-link";
+import AnchorLink, { LinkSession } from "anchor-link";
 import AnchorLinkBrowserTransport from "anchor-link-browser-transport";
 
 const appName = process.env.VUA_APP_NAME || "frontend";
@@ -11,7 +11,15 @@ const link = new AnchorLink({
 });
 
 export async function connectAnchor() {
-  return link.login(appName);
+  const result = await link.login(appName);
+  result.session.metadata.proof = {
+    transaction: Array.from(result.serializedTransaction),
+    signature: result.signatures[0]
+  };
+  ((link as unknown) as {
+    storeSession(identifier: string, session: LinkSession): Promise<void>;
+  }).storeSession(appName, result.session);
+  return result;
 }
 
 export async function restoreAnchorSession() {

@@ -1,19 +1,27 @@
 import { ObjectID, Collection } from "mongodb";
 import Router from "koa-router";
+import { validateIdentity, isTokenIssuer } from "./idproof";
 
 export function loadRoutes(router: Router, collection: Collection) {
-  router.get("/registrations", async ctx => {
-    ctx.body = await collection.find().toArray();
-  });
-
-  router.get("/registrations/:token", async ctx => {
-    ctx.body = await collection.find({ token: ctx.params.token }).toArray();
-  });
-
-  router.get("/registrations/:token/pending", async ctx => {
-    ctx.body = await collection
-      .find({ token: ctx.params.token, rewarded: { $ne: true } })
-      .toArray();
+  router.post("/registrations/:token/pending", async ctx => {
+    const {
+      transaction,
+      signature
+    }: { transaction?: number[]; signature?: string } = ctx.request.body || {};
+    if (!transaction || !signature) {
+      return (ctx.response.status = 400);
+    }
+    const auth = await validateIdentity(
+      Uint8Array.from(transaction),
+      signature
+    );
+    if (await isTokenIssuer(auth.actor, ctx.params.token)) {
+      ctx.body = await collection
+        .find({ token: ctx.params.token, rewarded: { $ne: true } })
+        .toArray();
+    } else {
+      ctx.response.status = 401;
+    }
   });
 
   router.post("/registrations", async ctx => {

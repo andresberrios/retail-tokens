@@ -108,7 +108,8 @@ export default class BlockchainClient {
 
   constructor(
     endpoint = process.env.VUE_APP_CHAIN_NODE || "http://localhost:8080",
-    public contract = process.env.VUE_APP_CONTRACT_ACCOUNT || "retailtokens"
+    public contract = process.env.VUE_APP_CONTRACT_ACCOUNT || "retailtokens",
+    public backend = process.env.VUE_APP_BACKEND_URL || "http://localhost:3000"
   ) {
     this.hyp = new Hyperion(endpoint, { fetch });
     this.rpc = new JsonRpc(this.hyp.endpoint);
@@ -296,5 +297,27 @@ export default class BlockchainClient {
     return new TraversableResultSet({ ...data, rows: filtered }, set =>
       this.getTokenHolders(symbol, set)
     );
+  }
+
+  private requireSession() {
+    if (!this.session) {
+      throw new TypeError("Session is required");
+    }
+  }
+
+  async getPendingRegistrations(token: string) {
+    this.requireSession();
+    if (!this.session?.metadata.proof) {
+      throw new TypeError("Could not find session proof");
+    }
+    const res = await fetch(`${this.backend}/registrations/${token}/pending`, {
+      method: "POST",
+      body: JSON.stringify(this.session?.metadata.proof),
+      headers: { "Content-Type": "application/json" }
+    });
+    if (!res.ok) {
+      throw new Error("Could not fetch pending registrations");
+    }
+    return res.json();
   }
 }
