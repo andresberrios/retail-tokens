@@ -51,8 +51,8 @@ export default new Vuex.Store<{
         commit("setAccount", session.auth);
       }
     },
-    logOut({ commit }) {
-      Vue.$client.session?.remove();
+    async logOut({ commit }) {
+      await Vue.$client.session?.remove();
       delete Vue.$client.session;
       commit("setAccount", null);
     },
