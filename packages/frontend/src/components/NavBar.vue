@@ -5,7 +5,7 @@
       <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
 
       <b-collapse id="nav-collapse" is-nav>
-        <b-navbar-nav class="ml-auto">
+        <b-navbar-nav class="mr-auto">
           <b-nav-form @submit.prevent="goToAccount(searchedAccount)">
             <b-form-input
               size="md"
@@ -17,10 +17,11 @@
               Search
             </b-button>
           </b-nav-form>
-          <b-nav-item>Log In</b-nav-item>
-          <b-nav-item href="/account/:id" active-class="active">
-            User
-          </b-nav-item>
+        </b-navbar-nav>
+        <b-navbar-nav class="ml-auto">
+          <b-nav-item v-if="!loggedIn" @click="logIn()">Log In</b-nav-item>
+          <b-nav-item v-if="loggedIn">{{ account }}</b-nav-item>
+          <b-nav-item v-if="loggedIn" @click="logOut()">Log Out</b-nav-item>
         </b-navbar-nav>
       </b-collapse>
     </b-navbar>
@@ -34,9 +35,26 @@ export default class NavBar extends Vue {
   appName = process.env.VUE_APP_NAME || "Retail Tokens";
 
   searchedAccount = "";
+  account = "chanchilinda";
+  loggedIn = false;
 
   goToAccount(account: string) {
     this.$router.push({ name: "account", params: { account } });
+  }
+  logIn() {
+    this.loggedIn = true;
+    // try {
+    //   await this.$store.dispatch("logIn");
+    // } catch (error) {
+    //   console.error(error);
+    //   this.$root.$bvToast.toast("Couldn't connect to Scatter", {
+    //     title: "Login unsuccessful",
+    //     variant: "warning"
+    //   });
+    // }
+  }
+  logOut() {
+    this.loggedIn = false;
   }
 }
 </script>

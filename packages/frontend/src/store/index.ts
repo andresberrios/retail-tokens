@@ -39,7 +39,7 @@ export default new Vuex.Store<{
     }
   },
   actions: {
-    async pairScatter({ commit }) {
+    async logIn({ commit }) {
       const { account, eos } = await connectScatter();
       Vue.$client.setEos(eos);
       commit("setAccount", account);
