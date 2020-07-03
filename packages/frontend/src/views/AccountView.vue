@@ -16,6 +16,7 @@
             <b-tabs card>
               <b-tab title="Account">
                 <TokenBalances :account="account" />
+                <hr class="my-2" />
                 <TransactionHistory :account="account" />
               </b-tab>
               <b-tab title="Token History">

@@ -6,8 +6,8 @@
     </div>
     <div v-else>
       <h4>Token Balance</h4>
-      <b-card>
-        <div class="d-flex my-3">
+      <b-card class="my-3">
+        <div class="d-flex my-2">
           <b-row>
             <b-col v-for="token in tokens" :key="token">
               <span>{{ token }}</span>
