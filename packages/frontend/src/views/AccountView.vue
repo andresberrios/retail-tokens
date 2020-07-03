@@ -19,11 +19,8 @@
                 <hr class="my-2" />
                 <TransactionHistory :account="account" />
               </b-tab>
-              <b-tab title="Token History">
-                <TokenHistory :account="account" />
-              </b-tab>
-              <b-tab title="User List">
-                <UserList />
+              <b-tab title="COOL Token">
+                <TokenInfo token="COOL" />
               </b-tab>
             </b-tabs>
           </b-card>
@@ -37,17 +34,15 @@
 import { Component, Vue, Prop } from "vue-property-decorator";
 import TokenBalances from "../components/TokenBalances.vue";
 import TransactionHistory from "../components/TransactionHistory.vue";
-import TokenHistory from "../components/TokenHistory.vue";
-import UserList from "../components/UserList.vue";
 import Avatar from "../components/Avatar.vue";
+import TokenInfo from "../components/TokenInfo.vue";
 
 @Component({
   components: {
     TokenBalances,
     TransactionHistory,
-    TokenHistory,
-    UserList,
-    Avatar
+    Avatar,
+    TokenInfo
   }
 })
 export default class AccountView extends Vue {

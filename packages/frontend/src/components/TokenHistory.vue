@@ -1,7 +1,7 @@
 <template>
   <div class="my-5">
     <div v-if="!loading && !items">
-      There are no tokens issued by this account.
+      Could not find transactions for this token.
     </div>
     <TransfersTable v-else :transfers="items" :loading="loading" />
   </div>
@@ -10,7 +10,7 @@
 <script lang="ts">
 import { Component, Vue, Prop, Watch } from "vue-property-decorator";
 import Avatar from "./Avatar.vue";
-import { TokenStats } from "../services/client";
+// import { TokenStats } from "../services/client";
 import TransfersTable, { Transfer } from "./TransfersTable.vue";
 
 @Component({
@@ -18,24 +18,16 @@ import TransfersTable, { Transfer } from "./TransfersTable.vue";
 })
 export default class TokenHistory extends Vue {
   @Prop({ required: true })
-  account!: string;
+  token!: string;
 
   items: Transfer[] | null = null;
 
   loading = true;
 
-  get accountAndAllTokens() {
-    return { account: this.account, allTokens: this.$store.state.allTokens };
-  }
-
-  @Watch("account")
-  @Watch("$store.state.allTokens", { immediate: true })
+  @Watch("token", { immediate: true })
   async loadHistory() {
-    const token: TokenStats | undefined = this.$store.getters.getIssuedToken(
-      this.account
-    );
-    if (token) {
-      const actions = await this.$client.getTokenTransfers(token.symbol);
+    if (this.token) {
+      const actions = await this.$client.getTokenTransfers(this.token);
       this.items = actions.map(a => ({
         id: a.trx_id.slice(0, 8),
         date: a["@timestamp"].toString(),
