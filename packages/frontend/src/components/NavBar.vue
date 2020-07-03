@@ -20,7 +20,12 @@
         </b-navbar-nav>
         <b-navbar-nav class="ml-auto">
           <b-nav-item v-if="!loggedIn" @click="logIn()">Log In</b-nav-item>
-          <b-nav-item v-if="loggedIn">{{ account }}</b-nav-item>
+          <b-nav-item
+            v-if="loggedIn"
+            :to="{ name: 'account', params: { account } }"
+          >
+            {{ account }}
+          </b-nav-item>
           <b-nav-item v-if="loggedIn" @click="logOut()">Log Out</b-nav-item>
         </b-navbar-nav>
       </b-collapse>
@@ -30,31 +35,38 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
+
 @Component
 export default class NavBar extends Vue {
   appName = process.env.VUE_APP_NAME || "Retail Tokens";
 
   searchedAccount = "";
-  account = "chanchilinda";
-  loggedIn = false;
 
   goToAccount(account: string) {
     this.$router.push({ name: "account", params: { account } });
   }
-  logIn() {
-    this.loggedIn = true;
-    // try {
-    //   await this.$store.dispatch("logIn");
-    // } catch (error) {
-    //   console.error(error);
-    //   this.$root.$bvToast.toast("Couldn't connect to Scatter", {
-    //     title: "Login unsuccessful",
-    //     variant: "warning"
-    //   });
-    // }
+
+  get loggedIn() {
+    return this.$store.getters.loggedIn;
   }
-  logOut() {
-    this.loggedIn = false;
+
+  get account() {
+    return this.$store.state.account?.actor;
+  }
+
+  async logIn() {
+    try {
+      await this.$store.dispatch("logIn");
+    } catch (error) {
+      this.$root.$bvToast.toast("Could not connect to wallet", {
+        title: "Login unsuccessful",
+        variant: "warning"
+      });
+    }
+  }
+
+  async logOut() {
+    await this.$store.dispatch("logOut");
   }
 }
 </script>
