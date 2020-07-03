@@ -28,8 +28,8 @@ export function loadRoutes(router: Router, collection: Collection) {
     const result = await collection.insertOne({
       _id: new ObjectID().toHexString(),
       token: ctx.request.body.token,
-      email: ctx.request.body.email,
-      account: ctx.request.body.account
+      account: ctx.request.body.account,
+      email: ctx.request.body.email
     });
     ctx.body = result.ops[0];
   });
