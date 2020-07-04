@@ -101,6 +101,14 @@ interface AccountInfo {
   permissions: AccountPermission[];
 }
 
+async function jsonFetch(url: string, body: unknown, method = "POST") {
+  return fetch(url, {
+    method,
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body)
+  });
+}
+
 export default class BlockchainClient {
   hyp: Hyperion;
   rpc: JsonRpc;
@@ -310,14 +318,52 @@ export default class BlockchainClient {
     if (!this.session?.metadata.proof) {
       throw new TypeError("Could not find session proof");
     }
-    const res = await fetch(`${this.backend}/registrations/${token}/pending`, {
-      method: "POST",
-      body: JSON.stringify(this.session?.metadata.proof),
-      headers: { "Content-Type": "application/json" }
-    });
+    const res = await jsonFetch(
+      `${this.backend}/registrations/${token}/pending`,
+      this.session?.metadata.proof
+    );
     if (!res.ok) {
       throw new Error("Could not fetch pending registrations");
     }
     return res.json();
+  }
+
+  async postRegistration(token: string, account: string, email: string) {
+    const res = await jsonFetch(`${this.backend}/registrations/${token}`, {
+      token,
+      account,
+      email
+    });
+    // TODO Handle error for figuring out when it's a duplicate registration
+    if (!res.ok) {
+      throw new Error("Could not post registration");
+    }
+  }
+
+  async giveTokens(quantity: string, account: string, registrationId?: string) {
+    this.requireSession();
+    const token = quantity.split(" ")[1];
+    await this.session?.transact({
+      action: {
+        account: this.contract,
+        name: "transfer",
+        authorization: [this.session.auth],
+        data: {
+          from: this.session.auth.actor,
+          to: account,
+          quantity,
+          memo: `Welcome to ${token}`
+        }
+      }
+    });
+    if (registrationId) {
+      const res = await fetch(
+        `${this.backend}/registrations/${registrationId}/rewarded`,
+        { method: "PUT" }
+      );
+      if (!res.ok) {
+        throw new Error("Failed to mark registration as rewarded!");
+      }
+    }
   }
 }

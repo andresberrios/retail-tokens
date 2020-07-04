@@ -25,6 +25,8 @@ export function loadRoutes(router: Router, collection: Collection) {
   });
 
   router.post("/registrations", async ctx => {
+    // TODO Check if token and account exist in the blockchain
+    // Also handle duplicates with a proper error so the client can tell it's a duplicate
     const result = await collection.insertOne({
       _id: new ObjectID().toHexString(),
       token: ctx.request.body.token,
