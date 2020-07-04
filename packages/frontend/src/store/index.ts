@@ -16,7 +16,7 @@ export default new Vuex.Store<{
   state: {
     account: null,
     allTokens: null,
-    allTokensLoading: true
+    allTokensLoading: false
   },
   getters: {
     loggedIn(state) {
@@ -33,7 +33,7 @@ export default new Vuex.Store<{
     setAllTokens(state, tokens) {
       state.allTokens = tokens;
     },
-    setLoading(state, loaded) {
+    setAllTokensLoading(state, loaded) {
       state.allTokensLoading = loaded;
     }
   },
@@ -56,11 +56,11 @@ export default new Vuex.Store<{
       commit("setAccount", null);
     },
     async loadAllTokens({ commit }) {
-      commit("setLoading", true);
+      commit("setAllTokensLoading", true);
       const results = await Vue.$client.getAllTokenStats();
       await results.fetchRest();
       commit("setAllTokens", results.rows);
-      commit("setLoading", false);
+      commit("setAllTokensLoading", false);
     }
   }
 });
