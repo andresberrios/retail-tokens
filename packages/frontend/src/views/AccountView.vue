@@ -13,7 +13,7 @@
     <div v-else>
       <div class="d-flex align-items-center">
         <Avatar size="4em" :value="account" type="account" />
-        <h2 class="ml-3">
+        <h2 class="m-0 ml-3">
           {{ account }}
         </h2>
       </div>

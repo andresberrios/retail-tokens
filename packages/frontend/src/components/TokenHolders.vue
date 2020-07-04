@@ -5,20 +5,18 @@
       Loading...
     </div>
     <div v-else>
-      <b-container>
-        <b-list-group>
-          <b-list-group-item v-for="user in users" :key="user.account">
-            <router-link
-              :to="{ name: 'account', params: { account: user.account } }"
-            >
-              <Avatar size="2em" :value="user.account" />
-              {{ user.account }}
-            </router-link>
-            <b-icon icon="arrow-right"></b-icon>
-            <span class="mx-2">{{ user.balance }}</span>
-          </b-list-group-item>
-        </b-list-group>
-      </b-container>
+      <b-list-group>
+        <b-list-group-item v-for="user in users" :key="user.account">
+          <router-link
+            :to="{ name: 'account', params: { account: user.account } }"
+          >
+            <Avatar size="2em" :value="user.account" />
+            {{ user.account }}
+          </router-link>
+          <b-icon icon="arrow-right"></b-icon>
+          <span class="mx-2">{{ user.balance }}</span>
+        </b-list-group-item>
+      </b-list-group>
     </div>
   </div>
 </template>

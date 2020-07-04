@@ -2,6 +2,7 @@ import Vue from "vue";
 import VueRouter, { RouteConfig } from "vue-router";
 import Home from "../views/Home.vue";
 import AccountView from "../views/AccountView.vue";
+import TokenView from "../views/TokenView.vue";
 
 Vue.use(VueRouter);
 
@@ -18,6 +19,13 @@ const routes: Array<RouteConfig> = [
     meta: { title: "Account" },
     props: true,
     component: AccountView
+  },
+  {
+    path: "/token/:token",
+    name: "token",
+    meta: { title: "Token" },
+    props: true,
+    component: TokenView
   }
 ];
 
