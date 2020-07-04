@@ -5,7 +5,6 @@
       Loading...
     </div>
     <div v-else>
-      <h4>Token Balance</h4>
       <b-card class="my-3">
         <b-row class="my-2">
           <b-col

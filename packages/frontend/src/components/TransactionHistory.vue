@@ -1,7 +1,6 @@
 <template>
   <div>
     <div class="my-3">
-      <h4 class="my-3">Transactions</h4>
       <TransfersTable :transfers="items" :loading="loading" />
     </div>
   </div>
