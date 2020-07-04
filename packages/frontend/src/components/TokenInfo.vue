@@ -18,7 +18,7 @@
 import { Vue, Component, Prop } from "vue-property-decorator";
 import Avatar from "./Avatar.vue";
 import TokenHistory from "./TokenHistory.vue";
-import TokenHolders from "./UserList.vue";
+import TokenHolders from "./TokenHolders.vue";
 import RegisteredUsers from "./RegisteredUsers.vue";
 
 @Component({
