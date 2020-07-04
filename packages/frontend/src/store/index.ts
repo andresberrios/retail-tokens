@@ -11,12 +11,12 @@ export default new Vuex.Store<{
     permission: string;
   } | null;
   allTokens: TokenStats[] | null;
-  allTokensLoaded: boolean | null;
+  allTokensLoading: boolean;
 }>({
   state: {
     account: null,
     allTokens: null,
-    allTokensLoaded: null
+    allTokensLoading: true
   },
   getters: {
     loggedIn(state) {
@@ -34,7 +34,7 @@ export default new Vuex.Store<{
       state.allTokens = tokens;
     },
     setLoading(state, loaded) {
-      state.allTokensLoaded = loaded;
+      state.allTokensLoading = loaded;
     }
   },
   actions: {
@@ -56,12 +56,11 @@ export default new Vuex.Store<{
       commit("setAccount", null);
     },
     async loadAllTokens({ commit }) {
-      let loaded = false;
+      commit("setLoading", true);
       const results = await Vue.$client.getAllTokenStats();
       await results.fetchRest();
-      loaded = true;
       commit("setAllTokens", results.rows);
-      commit("setLoading", loaded);
+      commit("setLoading", false);
     }
   }
 });
