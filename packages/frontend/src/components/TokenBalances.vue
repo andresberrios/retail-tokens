@@ -7,19 +7,20 @@
     <div v-else>
       <h4>Token Balance</h4>
       <b-card class="my-3">
-        <div class="d-flex my-2">
-          <b-row>
-            <b-col v-for="token in tokens" :key="token">
-              <span>{{ token }}</span>
-              <Avatar
-                class="mx-1"
-                size="1.5em"
-                :value="token.split(' ')[1]"
-                type="token"
-              />
-            </b-col>
-          </b-row>
-        </div>
+        <b-row class="my-2">
+          <b-col
+            sm="2"
+            v-for="token in tokens"
+            :key="token"
+            class="text-center"
+          >
+            <Avatar size="3.5em" :value="token.split(' ')[1]" type="token" />
+            <div class="mt-2">
+              {{ token.split(" ")[0] }}
+              <strong>{{ token.split(" ")[1] }}</strong>
+            </div>
+          </b-col>
+        </b-row>
       </b-card>
     </div>
   </div>
