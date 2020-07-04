@@ -5,7 +5,7 @@
         <TokenHistory :token="token" />
       </b-tab>
       <b-tab title="User List">
-        <UserList :token="token" />
+        <TokenHolders :token="token" />
       </b-tab>
       <b-tab title="Registered Users">
         <RegisteredUsers />
@@ -18,11 +18,11 @@
 import { Vue, Component, Prop } from "vue-property-decorator";
 import Avatar from "./Avatar.vue";
 import TokenHistory from "./TokenHistory.vue";
-import UserList from "./UserList.vue";
+import TokenHolders from "./UserList.vue";
 import RegisteredUsers from "./RegisteredUsers.vue";
 
 @Component({
-  components: { Avatar, TokenHistory, UserList, RegisteredUsers }
+  components: { Avatar, TokenHistory, TokenHolders, RegisteredUsers }
 })
 export default class TokenInfo extends Vue {
   @Prop({ required: true })

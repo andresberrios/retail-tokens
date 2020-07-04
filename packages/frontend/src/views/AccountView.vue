@@ -68,6 +68,7 @@ export default class AccountView extends Vue {
 
   @Watch("account", { immediate: true })
   async isAccount() {
+    this.loading = true;
     this.accountFound = await this.$client.accountExists(this.account);
     this.loading = false;
   }

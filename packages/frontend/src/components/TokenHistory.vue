@@ -27,6 +27,7 @@ export default class TokenHistory extends Vue {
   @Watch("token", { immediate: true })
   async loadHistory() {
     if (this.token) {
+      this.loading = true;
       const actions = await this.$client.getTokenTransfers(this.token);
       this.items = actions.map(a => ({
         id: a.trx_id.slice(0, 8),

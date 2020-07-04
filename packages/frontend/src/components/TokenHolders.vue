@@ -41,6 +41,7 @@ export default class UserList extends Vue {
 
   @Watch("token", { immediate: true })
   async loadUsers() {
+    this.loading = true;
     const tokenHolders = await this.$client.getTokenHolders(this.token);
     this.users = tokenHolders.rows;
     this.loading = false;

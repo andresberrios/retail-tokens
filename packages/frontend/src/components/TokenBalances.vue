@@ -41,6 +41,7 @@ export default class TokenBalances extends Vue {
 
   @Watch("account", { immediate: true })
   async loadBalances() {
+    this.loading = true;
     const data = await this.$client.getTokens(this.account);
     await data.fetchRest();
     this.tokens = data.rows;
