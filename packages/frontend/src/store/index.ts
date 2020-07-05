@@ -2,6 +2,7 @@ import Vue from "vue";
 import Vuex from "vuex";
 import { connectAnchor, restoreAnchorSession } from "./anchor";
 import { TokenStats } from "../services/client";
+import { V2_GET_CREATED_ACCOUNTS } from "@eoscafe/hyperion";
 
 Vue.use(Vuex);
 
@@ -24,6 +25,16 @@ export default new Vuex.Store<{
     },
     getIssuedTokens: state => (account: string) => {
       return state.allTokens?.filter(t => t.issuer === account) || [];
+    },
+    isCurrentUserTokenIssuer: state => (token: string) => {
+      if (state.account === null) {
+        return false;
+      }
+      const stats = state.allTokens?.find(t => t.symbol === token);
+      if (!stats) {
+        return false;
+      }
+      return state.account.actor === stats.issuer;
     }
   },
   mutations: {
