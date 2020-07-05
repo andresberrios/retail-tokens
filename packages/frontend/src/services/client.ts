@@ -319,7 +319,7 @@ export default class BlockchainClient {
       throw new TypeError("Could not find session proof");
     }
     const res = await jsonFetch(
-      `${this.backend}/registrations/${token}/pending`,
+      `${this.backend}/registrations/pending/${token}`,
       this.session?.metadata.proof
     );
     if (!res.ok) {
@@ -329,13 +329,21 @@ export default class BlockchainClient {
   }
 
   async submitRegistration(token: string, account: string, email: string) {
-    const res = await jsonFetch(`${this.backend}/registrations/${token}`, {
+    const res = await jsonFetch(`${this.backend}/registrations`, {
       token,
       account,
       email
     });
-    // TODO Handle error for figuring out when it's a duplicate registration
     if (!res.ok) {
+      if (res.status === 400) {
+        let data;
+        try {
+          data = await res.json();
+        } catch (error) {
+          throw new Error("Invalid request sent when posting registration");
+        }
+        throw data;
+      }
       throw new Error("Could not post registration");
     }
   }

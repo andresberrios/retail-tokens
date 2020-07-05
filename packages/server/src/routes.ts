@@ -8,7 +8,7 @@ import {
 } from "./idproof";
 
 export function loadRoutes(router: Router, collection: Collection) {
-  router.post("/registrations/:token/pending", async ctx => {
+  router.post("/registrations/pending/:token", async ctx => {
     const {
       transaction,
       signature
@@ -30,29 +30,44 @@ export function loadRoutes(router: Router, collection: Collection) {
   });
 
   router.post("/registrations", async ctx => {
+    let token = ctx.request.body.token;
     const {
-      token,
       account,
       email
     }: { token?: string; account?: string; email?: string } = ctx.request.body;
-    if (!token || !account || !email) {
+    if (
+      typeof token !== "string" ||
+      typeof account !== "string" ||
+      typeof email !== "string"
+    ) {
       return (ctx.response.status = 400);
     }
+    token = token.toUpperCase();
     const [accountValid, tokenValid] = await Promise.all([
       accountExists(account),
       tokenExists(token)
     ]);
-    if (!tokenValid || !accountValid) {
+    if (!tokenValid) {
       return (ctx.response.status = 400);
     }
-    // TODO Handle duplicates with a proper error so the client can tell it's a duplicate
-    const result = await collection.insertOne({
-      _id: new ObjectID().toHexString(),
-      token,
-      account,
-      email
-    });
-    ctx.body = result.ops[0];
+    if (!accountValid) {
+      ctx.body = { code: "INVALID_ACCOUNT" };
+      return (ctx.response.status = 400);
+    }
+    try {
+      const result = await collection.insertOne({
+        _id: new ObjectID().toHexString(),
+        token,
+        account,
+        email
+      });
+      ctx.body = result.ops[0];
+    } catch (error) {
+      if (error.name === "MongoError" && error.code === 11000) {
+        ctx.response.status = 400;
+        ctx.body = { code: "DUPLICATE_ENTRY" };
+      }
+    }
   });
 
   router.put("/registrations/:id/rewarded", async ctx => {
