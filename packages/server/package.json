@@ -10,7 +10,7 @@
   },
   "scripts": {
     "start": "node -r dotenv/config -r ts-node/register src/server.ts",
-    "serve": "nodemon",
+    "serve": "nodemon -e ts",
     "db": "docker run --rm -p 27017:27017 mongo:4.0.6"
   },
   "devDependencies": {

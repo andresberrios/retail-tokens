@@ -132,3 +132,24 @@ export async function isTokenIssuer(account: string, token: string) {
   const { [token]: stats } = await eos.rpc.get_currency_stats(contract, token);
   return stats.issuer === account;
 }
+
+export async function tokenExists(token: string) {
+  try {
+    const { [token]: stats } = await eos.rpc.get_currency_stats(
+      contract,
+      token
+    );
+    return !!stats;
+  } catch (error) {
+    return false;
+  }
+}
+
+export async function accountExists(account: string) {
+  try {
+    await eos.rpc.get_account(account);
+    return true;
+  } catch (error) {
+    return false;
+  }
+}

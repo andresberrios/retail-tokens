@@ -1,6 +1,11 @@
 import { ObjectID, Collection } from "mongodb";
 import Router from "koa-router";
-import { validateIdentity, isTokenIssuer } from "./idproof";
+import {
+  validateIdentity,
+  isTokenIssuer,
+  accountExists,
+  tokenExists
+} from "./idproof";
 
 export function loadRoutes(router: Router, collection: Collection) {
   router.post("/registrations/:token/pending", async ctx => {
@@ -25,13 +30,27 @@ export function loadRoutes(router: Router, collection: Collection) {
   });
 
   router.post("/registrations", async ctx => {
-    // TODO Check if token and account exist in the blockchain
-    // Also handle duplicates with a proper error so the client can tell it's a duplicate
+    const {
+      token,
+      account,
+      email
+    }: { token?: string; account?: string; email?: string } = ctx.request.body;
+    if (!token || !account || !email) {
+      return (ctx.response.status = 400);
+    }
+    const [accountValid, tokenValid] = await Promise.all([
+      accountExists(account),
+      tokenExists(token)
+    ]);
+    if (!tokenValid || !accountValid) {
+      return (ctx.response.status = 400);
+    }
+    // TODO Handle duplicates with a proper error so the client can tell it's a duplicate
     const result = await collection.insertOne({
       _id: new ObjectID().toHexString(),
-      token: ctx.request.body.token,
-      account: ctx.request.body.account,
-      email: ctx.request.body.email
+      token,
+      account,
+      email
     });
     ctx.body = result.ops[0];
   });
