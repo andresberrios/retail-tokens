@@ -2,7 +2,6 @@ import Vue from "vue";
 import Vuex from "vuex";
 import { connectAnchor, restoreAnchorSession } from "./anchor";
 import { TokenStats } from "../services/client";
-import { V2_GET_CREATED_ACCOUNTS } from "@eoscafe/hyperion";
 
 Vue.use(Vuex);
 
