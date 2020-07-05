@@ -3,6 +3,9 @@
     <div class="d-flex align-items-center">
       <Avatar size="4em" :value="token" type="token" />
       <h2 class="m-0 ml-3">{{ token }}</h2>
+      <b-button class="ml-auto" :to="{ name: 'register', params: { token } }">
+        Register
+      </b-button>
     </div>
     <hr />
     <TokenInfo :token="token" />
