@@ -4,7 +4,7 @@
       @submit.prevent="submit"
       class="d-flex justify-content-center align-items-center"
     >
-      <b-col xs="9" sm="9" md="7" lg="5">
+      <b-col xs="10" sm="10" md="8" lg="6" xl="6">
         <div class="d-flex justify-content-center align-items-center">
           <Avatar size="4em" :value="token" type="token" />
           <h1 class="m-0 ml-3">{{ token }}</h1>
