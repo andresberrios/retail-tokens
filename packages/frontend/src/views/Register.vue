@@ -1,8 +1,8 @@
 <template>
-  <b-container class="py-5">
+  <b-container class="my-auto py-5">
     <b-row class="justify-content-center align-items-center">
       <b-col sm="10" md="8" lg="6">
-        <b-form @submit.prevent="submit">
+        <b-form @submit.prevent="submit" v-if="!submitted">
           <div class="d-flex justify-content-center align-items-center">
             <Avatar size="4em" :value="token" type="token" />
             <h1 class="m-0 ml-3">{{ token }}</h1>
@@ -35,11 +35,22 @@
                 ></b-input>
               </b-input-group>
             </b-form-group>
+            <b-alert show variant="danger" v-if="errorMessage" class="my-4">
+              {{ errorMessage }}
+            </b-alert>
             <b-button block size="lg" type="submit" variant="success">
               Submit
             </b-button>
           </b-card>
         </b-form>
+        <div v-else>
+          <b-card class="text-center" border-variant="success">
+            <p class="h2 text-success">
+              <b-icon icon="check2-circle" />
+              Registration successful!
+            </p>
+          </b-card>
+        </div>
       </b-col>
     </b-row>
   </b-container>
@@ -61,12 +72,27 @@ export default class Register extends Vue {
     account: ""
   };
 
+  submitted = false;
+  errorMessage = "";
+
   async submit() {
-    await this.$client.submitRegistration(
-      this.token,
-      this.registration.account,
-      this.registration.email
-    );
+    try {
+      await this.$client.submitRegistration(
+        this.token,
+        this.registration.account,
+        this.registration.email
+      );
+      this.submitted = true;
+    } catch (error) {
+      if (error.code === "INVALID_ACCOUNT") {
+        this.errorMessage = "Account does not exist!";
+      } else if (error.code === "DUPLICATE_ENTRY") {
+        this.errorMessage =
+          "Already registered for this token with this account!";
+      } else {
+        this.errorMessage = "Could not submit registration.";
+      }
+    }
   }
 }
 </script>

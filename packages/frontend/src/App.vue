@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" class="d-flex flex-column">
     <NavBar />
     <router-view />
   </div>
@@ -22,4 +22,8 @@ export default class App extends Vue {
 }
 </script>
 
-<style></style>
+<style>
+#app {
+  min-height: 100vh;
+}
+</style>
