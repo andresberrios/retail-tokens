@@ -3,6 +3,7 @@ import VueRouter, { RouteConfig } from "vue-router";
 import Home from "../views/Home.vue";
 import AccountView from "../views/AccountView.vue";
 import TokenView from "../views/TokenView.vue";
+import Register from "../views/Register.vue";
 
 Vue.use(VueRouter);
 
@@ -26,6 +27,13 @@ const routes: Array<RouteConfig> = [
     meta: { title: "Token" },
     props: true,
     component: TokenView
+  },
+  {
+    path: "/token/:token/register",
+    name: "register",
+    meta: { title: "Register" },
+    props: true,
+    component: Register
   }
 ];
 

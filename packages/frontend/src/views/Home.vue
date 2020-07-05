@@ -19,7 +19,11 @@
             </router-link>
           </b-col>
           <b-col sm="2">
-            <b-button>Register</b-button>
+            <b-button
+              :to="{ name: 'register', params: { token: token.symbol } }"
+            >
+              Register
+            </b-button>
           </b-col>
         </b-row>
       </b-list-group-item>
