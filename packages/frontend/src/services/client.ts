@@ -328,7 +328,7 @@ export default class BlockchainClient {
     return res.json();
   }
 
-  async postRegistration(token: string, account: string, email: string) {
+  async submitRegistration(token: string, account: string, email: string) {
     const res = await jsonFetch(`${this.backend}/registrations/${token}`, {
       token,
       account,
