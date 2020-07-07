@@ -30,8 +30,8 @@
             v-for="token in tokens"
             :key="token.symbol"
             :title="token.symbol"
-          >
-            <TokenInfo :token="token.symbol" />
+            lazy
+            ><TokenInfo :token="token.symbol" />
           </b-tab>
         </b-tabs>
       </b-card>

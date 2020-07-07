@@ -4,10 +4,10 @@
       <b-tab title="Token Transactions" active>
         <TokenHistory :token="token" />
       </b-tab>
-      <b-tab title="Token Holders">
+      <b-tab title="Token Holders" lazy>
         <TokenHolders :token="token" />
       </b-tab>
-      <b-tab title="Registered Users">
+      <b-tab title="Registered Users" lazy>
         <RegisteredUsers />
       </b-tab>
     </b-tabs>
