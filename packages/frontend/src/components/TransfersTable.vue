@@ -29,8 +29,12 @@
         </router-link>
       </template>
       <template v-slot:cell(amount)="data">
-        {{ data.value }}
-        <Avatar size="1.5em" :value="data.value.split(' ')[1]" type="token" />
+        <router-link
+          :to="{ name: 'token', params: { token: data.value.split(' ')[1] } }"
+        >
+          {{ data.value }}
+          <Avatar size="1.5em" :value="data.value.split(' ')[1]" type="token" />
+        </router-link>
       </template>
     </b-table>
   </div>

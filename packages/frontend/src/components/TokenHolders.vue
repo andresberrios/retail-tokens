@@ -10,11 +10,17 @@
           <router-link
             :to="{ name: 'account', params: { account: user.account } }"
           >
-            <Avatar size="2em" :value="user.account" />
+            <Avatar size="2em" :value="user.account" type="account" />
             {{ user.account }}
           </router-link>
           <b-icon icon="arrow-right"></b-icon>
-          <span class="mx-2">{{ user.balance }}</span>
+          <router-link
+            :to="{
+              name: 'token',
+              params: { token: user.balance.split(' ')[1] }
+            }"
+            ><span class="mx-2">{{ user.balance }}</span>
+          </router-link>
         </b-list-group-item>
       </b-list-group>
     </div>

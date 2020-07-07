@@ -13,11 +13,15 @@
             :key="token"
             class="text-center"
           >
-            <Avatar size="3.5em" :value="token.split(' ')[1]" type="token" />
-            <div class="mt-2">
-              {{ token.split(" ")[0] }}
-              <strong>{{ token.split(" ")[1] }}</strong>
-            </div>
+            <router-link
+              :to="{ name: 'token', params: { token: token.split(' ')[1] } }"
+            >
+              <Avatar size="3.5em" :value="token.split(' ')[1]" type="token" />
+              <div class="mt-2">
+                {{ token.split(" ")[0] }}
+                <strong>{{ token.split(" ")[1] }}</strong>
+              </div>
+            </router-link>
           </b-col>
         </b-row>
       </b-card>

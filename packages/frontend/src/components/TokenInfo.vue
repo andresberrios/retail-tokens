@@ -1,10 +1,10 @@
 <template>
   <div>
     <b-tabs content-class="mt-3">
-      <b-tab title="Token" active>
+      <b-tab title="Token Transactions" active>
         <TokenHistory :token="token" />
       </b-tab>
-      <b-tab title="User List">
+      <b-tab title="Token Holders">
         <TokenHolders :token="token" />
       </b-tab>
       <b-tab title="Registered Users">
