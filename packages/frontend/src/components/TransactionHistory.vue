@@ -1,8 +1,9 @@
 <template>
-  <div>
-    <div class="my-3">
-      <TransfersTable :transfers="items" :loading="loading" />
+  <div class="py-5">
+    <div v-if="items && items.length === 0">
+      <p>This account has no transactions</p>
     </div>
+    <TransfersTable v-else :transfers="items" :loading="loading" />
   </div>
 </template>
 

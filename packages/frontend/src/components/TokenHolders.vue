@@ -5,7 +5,10 @@
       Loading...
     </div>
     <div v-else>
-      <b-list-group>
+      <div v-if="users && users.length === 0">
+        <p>There are no token holders of this token.</p>
+      </div>
+      <b-list-group v-else>
         <b-list-group-item v-for="user in users" :key="user.account">
           <router-link
             :to="{ name: 'account', params: { account: user.account } }"

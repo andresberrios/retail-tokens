@@ -1,7 +1,9 @@
 <template>
-  <div class="my-5">
-    <div v-if="!loading && !items">
-      Could not find transactions for this token.
+  <div class="py-5">
+    <div v-if="!loading && items.length === 0">
+      <p>
+        Could not find transactions for this token.
+      </p>
     </div>
     <TransfersTable v-else :transfers="items" :loading="loading" />
   </div>
@@ -10,7 +12,6 @@
 <script lang="ts">
 import { Component, Vue, Prop, Watch } from "vue-property-decorator";
 import Avatar from "./Avatar.vue";
-// import { TokenStats } from "../services/client";
 import TransfersTable, { Transfer } from "./TransfersTable.vue";
 
 @Component({

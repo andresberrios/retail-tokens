@@ -5,37 +5,42 @@
       Loading...
     </div>
     <div v-else>
-      <b-input-group class="mb-3">
-        <b-row class="align-content-center">
-          <b-col sm="6">
-            <label for="amount">Enter the amount:</label>
-          </b-col>
-          <b-col sm="5">
-            <b-form-input v-model="amount" id="amount" type="number">
-            </b-form-input>
-          </b-col>
-        </b-row>
-      </b-input-group>
-      <b-row>
-        <b-col> </b-col>
-      </b-row>
-      <b-list-group>
-        <b-list-group-item v-for="user in users" :key="user.account">
-          <b-row>
-            <b-col sm="2">
-              <router-link
-                :to="{ name: 'account', params: { account: user.account } }"
-              >
-                <Avatar size="2em" :value="user.account" type="account" />
-                {{ user.account }}
-              </router-link>
+      <div v-if="users && users.length === 0">
+        <p>No registered users</p>
+      </div>
+      <div v-else>
+        <b-input-group class="mb-3">
+          <b-row class="align-content-center">
+            <b-col sm="6">
+              <label for="amount">Enter the amount:</label>
             </b-col>
-            <b-col sm="2">
-              <b-button class="ml-3">Send Token</b-button>
+            <b-col sm="5">
+              <b-form-input v-model="amount" id="amount" type="number">
+              </b-form-input>
             </b-col>
           </b-row>
-        </b-list-group-item>
-      </b-list-group>
+        </b-input-group>
+        <b-row>
+          <b-col> </b-col>
+        </b-row>
+        <b-list-group>
+          <b-list-group-item v-for="user in users" :key="user.account">
+            <b-row>
+              <b-col sm="2">
+                <router-link
+                  :to="{ name: 'account', params: { account: user.account } }"
+                >
+                  <Avatar size="2em" :value="user.account" type="account" />
+                  {{ user.account }}
+                </router-link>
+              </b-col>
+              <b-col sm="2">
+                <b-button class="ml-3">Send Token</b-button>
+              </b-col>
+            </b-row>
+          </b-list-group-item>
+        </b-list-group>
+      </div>
     </div>
   </div>
 </template>
