@@ -2,9 +2,9 @@ import { ObjectID, Collection } from "mongodb";
 import Router from "koa-router";
 import {
   validateIdentity,
-  isTokenIssuer,
   accountExists,
-  tokenExists
+  tokenExists,
+  getTokenStats
 } from "./idproof";
 
 export function loadRoutes(router: Router, collection: Collection) {
@@ -16,17 +16,26 @@ export function loadRoutes(router: Router, collection: Collection) {
     if (!transaction || !signature) {
       return (ctx.response.status = 400);
     }
-    const auth = await validateIdentity(
-      Uint8Array.from(transaction),
-      signature
-    );
-    if (await isTokenIssuer(auth.actor, ctx.params.token)) {
-      ctx.body = await collection
-        .find({ token: ctx.params.token, rewarded: { $ne: true } })
-        .toArray();
-    } else {
-      ctx.response.status = 401;
+    if (!ctx.params.token) {
+      return (ctx.response.status = 400);
     }
+    const stats = await getTokenStats(ctx.params.token);
+    if (!stats) {
+      return (ctx.response.status = 400);
+    }
+    let auth;
+    try {
+      auth = await validateIdentity(Uint8Array.from(transaction), signature);
+    } catch (error) {
+      return (ctx.response.status = 400);
+    }
+    if (auth.actor !== stats.issuer) {
+      return (ctx.response.status = 401);
+    }
+
+    ctx.body = await collection
+      .find({ token: ctx.params.token, rewarded: { $ne: true } })
+      .toArray();
   });
 
   router.post("/registrations", async ctx => {

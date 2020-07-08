@@ -40,6 +40,13 @@ interface AccountInfo {
   permissions: AccountPermission[];
 }
 
+interface TokenStats {
+  symbol: string;
+  supply: string;
+  max_supply: string;
+  issuer: string;
+}
+
 /**
  * Ensure public key is in new PUB_ format.
  * @internal
@@ -128,9 +135,15 @@ export async function validateIdentity(
   return signer;
 }
 
-export async function isTokenIssuer(account: string, token: string) {
+export async function getTokenStats(
+  token: string
+): Promise<TokenStats | undefined> {
   const { [token]: stats } = await eos.rpc.get_currency_stats(contract, token);
-  return stats.issuer === account;
+  if (!stats) {
+    return undefined;
+  }
+  stats.symbol = token;
+  return stats;
 }
 
 export async function tokenExists(token: string) {
