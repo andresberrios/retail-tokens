@@ -7,7 +7,7 @@
       <b-tab title="Token Holders" lazy>
         <TokenHolders :token="token" />
       </b-tab>
-      <b-tab title="Registered Users" lazy>
+      <b-tab v-if="isTokenIssuer" title="Registered Users" lazy>
         <RegisteredUsers />
       </b-tab>
     </b-tabs>
@@ -27,6 +27,10 @@ import RegisteredUsers from "./RegisteredUsers.vue";
 export default class TokenInfo extends Vue {
   @Prop({ required: true })
   token!: string;
+
+  get isTokenIssuer() {
+    return this.$store.getters.isCurrentUserTokenIssuer(this.token);
+  }
 }
 </script>
 
