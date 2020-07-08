@@ -8,7 +8,7 @@
         <TokenHolders :token="token" />
       </b-tab>
       <b-tab v-if="isTokenIssuer" title="Registered Users" lazy>
-        <RegisteredUsers />
+        <RegisteredUsers :token="token" />
       </b-tab>
     </b-tabs>
   </div>

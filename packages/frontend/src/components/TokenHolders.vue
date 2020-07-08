@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="py-3">
     <div v-if="loading">
       <b-spinner label="Spinning"></b-spinner>
       Loading...
