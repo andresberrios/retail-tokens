@@ -25,7 +25,7 @@
       <b-list-group>
         <b-list-group-item v-for="user in users" :key="user.account">
           <b-row>
-            <b-col sm="2">
+            <b-col sm="4" md="4" lg="2">
               <router-link
                 :to="{ name: 'account', params: { account: user.account } }"
               >
@@ -33,7 +33,8 @@
                 {{ user.account }}
               </router-link>
             </b-col>
-            <b-col sm="2">
+            <b-col sm="4" md="3" lg="3">{{ user.email }}</b-col>
+            <b-col sm="4" md="3" lg="3">
               <b-button class="ml-3">Send Token</b-button>
             </b-col>
           </b-row>
