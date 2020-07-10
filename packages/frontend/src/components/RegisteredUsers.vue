@@ -8,24 +8,14 @@
       <p>No registered users</p>
     </div>
     <div v-else>
-      <b-input-group class="mb-3">
-        <b-row class="align-content-center">
-          <b-col sm="6">
-            <label for="amount">Enter the amount:</label>
-          </b-col>
-          <b-col sm="5">
-            <b-form-input v-model="amount" id="amount" type="number">
-            </b-form-input>
-          </b-col>
-        </b-row>
-      </b-input-group>
-      <b-row>
-        <b-col> </b-col>
-      </b-row>
-      <b-list-group>
+      <b-form inline>
+        <label for="amount">Enter the amount:</label>
+        <b-input v-model="amount" id="amount" type="number" class="ml-3" />
+      </b-form>
+      <b-list-group class="mt-3">
         <b-list-group-item v-for="user in users" :key="user.account">
           <b-row>
-            <b-col sm="4" md="4" lg="2">
+            <b-col sm="4" lg="2">
               <router-link
                 :to="{ name: 'account', params: { account: user.account } }"
               >
@@ -33,9 +23,11 @@
                 {{ user.account }}
               </router-link>
             </b-col>
-            <b-col sm="4" md="3" lg="3">{{ user.email }}</b-col>
-            <b-col sm="4" md="3" lg="3">
-              <b-button class="ml-3">Send Token</b-button>
+            <b-col sm="4" md="3">
+              {{ user.email }}
+            </b-col>
+            <b-col sm="4" md="3">
+              <b-button size="sm" class="ml-3">Send Token</b-button>
             </b-col>
           </b-row>
         </b-list-group-item>
