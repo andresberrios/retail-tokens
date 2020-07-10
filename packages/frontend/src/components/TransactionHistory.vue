@@ -1,9 +1,28 @@
 <template>
-  <div class="py-5">
-    <div v-if="items && items.length === 0">
+  <div>
+    <div v-if="loading" class="text-center text-dark">
+      <b-spinner variant="dark" class="align-middle"></b-spinner>
+      <strong>Loading...</strong>
+    </div>
+    <div v-else-if="items && items.length === 0">
       <p>This account has no transactions</p>
     </div>
-    <TransfersTable v-else :transfers="items" :loading="loading" />
+    <div v-else>
+      <label for="filter-token">Filter by Token</label>
+      <b-form-select
+        v-model="selectedToken"
+        :options="options"
+        id="filter-token"
+        class="my-3"
+      >
+        <template v-slot:first>
+          <b-form-select-option :value="null">
+            -- All tokens --
+          </b-form-select-option>
+        </template>
+      </b-form-select>
+      <TransfersTable :transfers="filteredTokens" />
+    </div>
   </div>
 </template>
 
@@ -20,12 +39,23 @@ export default class TransactionHistory extends Vue {
   account!: string;
 
   items: Transfer[] | null = null;
-
+  selectedToken: string | null = null;
+  options: { value: string; text: string }[] | null = null;
   loading = true;
 
-  @Watch("account", { immediate: true })
+  get filteredTokens() {
+    if (this.items === null) {
+      return this.items;
+    }
+    if (this.items === [] || !this.selectedToken) {
+      return this.items;
+    }
+    return this.items.filter(
+      item => item.amount.split(" ")[1] === this.selectedToken
+    );
+  }
+
   async loadHistory() {
-    this.loading = true;
     const actions = await this.$client.getAccountTransfers(this.account);
     this.items = actions.map(a => ({
       id: a.trx_id.slice(0, 8),
@@ -35,6 +65,21 @@ export default class TransactionHistory extends Vue {
       amount: a.act.data.quantity,
       memo: a.act.data.memo
     }));
+  }
+
+  async loadTokenBalance() {
+    const data = await this.$client.getTokens(this.account);
+    await data.fetchRest();
+    this.options = data.rows.map(b => ({
+      value: b.split(" ")[1],
+      text: b.split(" ")[1]
+    }));
+  }
+
+  @Watch("account", { immediate: true })
+  async loadTransactions() {
+    this.loading = true;
+    await Promise.all([this.loadHistory(), this.loadTokenBalance()]);
     this.loading = false;
   }
 }
