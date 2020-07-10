@@ -24,7 +24,7 @@ import { Component, Vue, Prop, Watch } from "vue-property-decorator";
 import Avatar from "./Avatar.vue";
 import TransfersTable, { Transfer } from "./TransfersTable.vue";
 
-const limit = 1;
+const limit = 10;
 
 @Component({
   components: { Avatar, TransfersTable }
