@@ -156,7 +156,10 @@ export default class BlockchainClient {
       limit,
       sort
     });
-    return data.actions;
+    return {
+      actions: data.actions,
+      total: data.total.value
+    };
   }
 
   async getTokenTransfers(
@@ -173,7 +176,10 @@ export default class BlockchainClient {
       limit,
       sort
     });
-    return data.actions;
+    return {
+      actions: data.actions,
+      total: data.total.value
+    };
   }
 
   async getTokens(

@@ -56,7 +56,7 @@ export default class AccountHistory extends Vue {
   }
 
   async loadHistory() {
-    const actions = await this.$client.getAccountTransfers(this.account);
+    const { actions } = await this.$client.getAccountTransfers(this.account);
     this.items = actions.map(a => ({
       id: a.trx_id.slice(0, 8),
       date: a["@timestamp"].toString(),
