@@ -67,11 +67,11 @@ export default class TransfersTable extends Vue {
   @Prop({ required: true })
   transfers!: Transfer[];
 
-  @Prop()
-  hasMore = false;
+  @Prop({ default: false })
+  hasMore!: boolean;
 
-  @Prop()
-  loadingMore = false;
+  @Prop({ default: false })
+  loadingMore!: boolean;
 
   fields = [{ label: "ID", key: "id" }, "date", "from", "to", "amount", "memo"];
 }
