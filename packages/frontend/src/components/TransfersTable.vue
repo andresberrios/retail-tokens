@@ -9,6 +9,7 @@
       table-variant="dark"
       stacked="sm"
       show-empty
+      class="m-0"
     >
       <template v-slot:empty>
         <div class="h5 text-center">Nothing to show</div>
@@ -34,6 +35,15 @@
         </router-link>
       </template>
     </b-table>
+    <div v-if="hasMore" class="bg-dark p-3 text-center">
+      <div v-if="loadingMore" class="text-light">
+        <b-spinner variant="light" class="align-middle mr-2" />
+        <strong>Loading...</strong>
+      </div>
+      <b-button v-else size="sm" @click="$emit('load-more')"
+        >Load more</b-button
+      >
+    </div>
   </div>
 </template>
 
@@ -56,6 +66,12 @@ export interface Transfer {
 export default class TransfersTable extends Vue {
   @Prop({ required: true })
   transfers!: Transfer[];
+
+  @Prop()
+  hasMore = true;
+
+  @Prop()
+  loadingMore = true;
 
   fields = [{ label: "ID", key: "id" }, "date", "from", "to", "amount", "memo"];
 }
