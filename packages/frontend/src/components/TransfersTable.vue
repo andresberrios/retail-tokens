@@ -8,7 +8,11 @@
       head-variant="dark"
       table-variant="dark"
       stacked="sm"
+      show-empty
     >
+      <template v-slot:empty>
+        <div class="h5 text-center">Nothing to show</div>
+      </template>
       <template v-slot:cell(from)="data">
         <router-link :to="{ name: 'account', params: { account: data.value } }">
           <Avatar size="2em" :value="data.value" type="account" />
