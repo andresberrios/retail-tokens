@@ -24,7 +24,7 @@
             <TokenBalances :account="account" />
             <hr class="my-2" />
             <h4 class="my-3">Transactions</h4>
-            <TransactionHistory :account="account" />
+            <AccountHistory :account="account" />
           </b-tab>
           <b-tab
             v-for="token in tokens"
@@ -42,7 +42,7 @@
 <script lang="ts">
 import { Component, Vue, Prop, Watch } from "vue-property-decorator";
 import TokenBalances from "../components/TokenBalances.vue";
-import TransactionHistory from "../components/TransactionHistory.vue";
+import AccountHistory from "../components/AccountHistory.vue";
 import Avatar from "../components/Avatar.vue";
 import TokenInfo from "../components/TokenInfo.vue";
 import { TokenStats } from "../services/client";
@@ -50,7 +50,7 @@ import { TokenStats } from "../services/client";
 @Component({
   components: {
     TokenBalances,
-    TransactionHistory,
+    AccountHistory,
     Avatar,
     TokenInfo
   }

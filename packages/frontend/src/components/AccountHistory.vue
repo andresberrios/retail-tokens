@@ -34,7 +34,7 @@ import TransfersTable, { Transfer } from "./TransfersTable.vue";
 @Component({
   components: { Avatar, TransfersTable }
 })
-export default class TransactionHistory extends Vue {
+export default class AccountHistory extends Vue {
   @Prop({ required: true })
   account!: string;
 
