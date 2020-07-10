@@ -21,8 +21,8 @@
 
 <script lang="ts">
 import { Component, Vue, Prop, Watch } from "vue-property-decorator";
-import Avatar from "./Avatar.vue";
-import TransfersTable, { Transfer } from "./TransfersTable.vue";
+import Avatar from "../Avatar.vue";
+import TransfersTable, { Transfer } from "../TransfersTable.vue";
 
 const limit = 10;
 

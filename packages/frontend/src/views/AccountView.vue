@@ -41,10 +41,10 @@
 
 <script lang="ts">
 import { Component, Vue, Prop, Watch } from "vue-property-decorator";
-import TokenBalances from "../components/TokenBalances.vue";
-import AccountHistory from "../components/AccountHistory.vue";
+import TokenBalances from "../components/account/TokenBalances.vue";
+import AccountHistory from "../components/account/AccountHistory.vue";
 import Avatar from "../components/Avatar.vue";
-import TokenInfo from "../components/TokenInfo.vue";
+import TokenInfo from "../components/token/TokenInfo.vue";
 import { TokenStats } from "../services/client";
 
 @Component({

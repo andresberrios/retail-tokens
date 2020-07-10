@@ -14,7 +14,7 @@
 
 <script lang="ts">
 import { Vue, Component, Prop } from "vue-property-decorator";
-import TokenInfo from "../components/TokenInfo.vue";
+import TokenInfo from "../components/token/TokenInfo.vue";
 import Avatar from "../components/Avatar.vue";
 
 @Component({

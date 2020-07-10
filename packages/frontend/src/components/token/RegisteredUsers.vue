@@ -38,7 +38,7 @@
 
 <script lang="ts">
 import { Vue, Component, Prop, Watch } from "vue-property-decorator";
-import Avatar from "./Avatar.vue";
+import Avatar from "../Avatar.vue";
 
 @Component({
   components: { Avatar }

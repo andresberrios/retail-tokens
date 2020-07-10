@@ -30,8 +30,8 @@
 
 <script lang="ts">
 import { Component, Vue, Prop, Watch } from "vue-property-decorator";
-import Avatar from "../components/Avatar.vue";
-import { TokenHolder } from "../services/client";
+import Avatar from "../Avatar.vue";
+import { TokenHolder } from "../../services/client";
 
 @Component({
   components: { Avatar }
