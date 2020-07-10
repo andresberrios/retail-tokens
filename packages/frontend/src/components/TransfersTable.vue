@@ -5,17 +5,10 @@
       :items="transfers"
       :fields="fields"
       :bordered="true"
-      :busy="loading"
       head-variant="dark"
       table-variant="dark"
       stacked="sm"
     >
-      <template v-slot:table-busy>
-        <div class="text-center text-light my-2">
-          <b-spinner variant="light" class="align-middle"></b-spinner>
-          <strong>Loading...</strong>
-        </div>
-      </template>
       <template v-slot:cell(from)="data">
         <router-link :to="{ name: 'account', params: { account: data.value } }">
           <Avatar size="2em" :value="data.value" type="account" />
@@ -59,9 +52,6 @@ export interface Transfer {
 export default class TransfersTable extends Vue {
   @Prop({ required: true })
   transfers!: Transfer[];
-
-  @Prop({ required: true })
-  loading!: boolean;
 
   fields = [{ label: "ID", key: "id" }, "date", "from", "to", "amount", "memo"];
 }

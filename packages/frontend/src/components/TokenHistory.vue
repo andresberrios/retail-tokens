@@ -1,11 +1,15 @@
 <template>
-  <div class="py-5">
-    <div v-if="!loading && items.length === 0">
+  <div>
+    <div v-if="loading" class="text-center text-dark">
+      <b-spinner variant="dark" class="align-middle"></b-spinner>
+      <strong>Loading...</strong>
+    </div>
+    <div v-else-if="items && items.length === 0">
       <p>
         Could not find transactions for this token.
       </p>
     </div>
-    <TransfersTable v-else :transfers="items" :loading="loading" />
+    <TransfersTable v-else :transfers="items" />
   </div>
 </template>
 
