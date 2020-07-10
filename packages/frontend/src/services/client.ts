@@ -313,17 +313,33 @@ export default class BlockchainClient {
     }
   }
 
-  async getPendingRegistrations(token: string) {
+  private requireIdentityProof() {
     this.requireSession();
     if (!this.session?.metadata.proof) {
       throw new TypeError("Could not find session proof");
     }
+  }
+
+  async getPendingRegistrations(token: string) {
+    this.requireIdentityProof();
     const res = await jsonFetch(
       `${this.backend}/registrations/pending/${token}`,
       this.session?.metadata.proof
     );
     if (!res.ok) {
       throw new Error("Could not fetch pending registrations");
+    }
+    return res.json();
+  }
+
+  async getRewardedRegistrations(token: string) {
+    this.requireIdentityProof();
+    const res = await jsonFetch(
+      `${this.backend}/registrations/rewarded/${token}`,
+      this.session?.metadata.proof
+    );
+    if (!res.ok) {
+      throw new Error("Could not fetch rewarded registrations");
     }
     return res.json();
   }
