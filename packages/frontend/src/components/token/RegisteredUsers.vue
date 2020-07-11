@@ -9,8 +9,8 @@
         <p>No users pending reward</p>
       </div>
       <div v-else>
-        <h2>Users pending reward</h2>
-        <b-form inline>
+        <h3>Users pending reward</h3>
+        <b-form inline class="mt-4">
           <label for="amount">Enter the amount:</label>
           <b-input v-model="amount" id="amount" type="number" class="ml-3" />
         </b-form>
@@ -35,11 +35,11 @@
           </b-list-group-item>
         </b-list-group>
       </div>
-      <div v-if="rewardedUsers && rewardedUsers.length === 0">
+      <div v-if="rewardedUsers && rewardedUsers.length === 0" class="mt-5">
         <p>No users rewarded yet</p>
       </div>
-      <div v-else>
-        <h2>Rewarded users</h2>
+      <div v-else class="mt-5">
+        <h3>Rewarded users</h3>
         <b-list-group class="mt-3">
           <b-list-group-item v-for="user in rewardedUsers" :key="user.account">
             <b-row>
