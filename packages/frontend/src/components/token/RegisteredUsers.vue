@@ -29,7 +29,13 @@
                 {{ user.email }}
               </b-col>
               <b-col sm="4" md="3">
-                <b-button size="sm" class="ml-3">Send Token</b-button>
+                <b-button
+                  size="sm"
+                  class="ml-3"
+                  @click="sendToken(user.account, user._id)"
+                >
+                  Send Token
+                </b-button>
               </b-col>
             </b-row>
           </b-list-group-item>
@@ -85,6 +91,14 @@ export default class RegisteredUsers extends Vue {
   rewardedUsers: Registration[] | null = null;
 
   loading = true;
+
+  async sendToken(account: string, registrationId: string) {
+    await this.$client.giveTokens(
+      `${this.amount} ${this.token}`,
+      account,
+      registrationId
+    );
+  }
 
   @Watch("token", { immediate: true })
   async loadRegisteredUsers() {
