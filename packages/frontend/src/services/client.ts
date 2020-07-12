@@ -106,7 +106,7 @@ interface Registration {
   token: string;
   account: string;
   email: string;
-  rewardedAt: string;
+  rewardedAt?: string;
 }
 
 async function jsonFetch(url: string, body: unknown, method = "POST") {
