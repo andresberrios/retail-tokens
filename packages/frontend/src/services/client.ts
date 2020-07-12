@@ -101,6 +101,14 @@ interface AccountInfo {
   permissions: AccountPermission[];
 }
 
+interface Registration {
+  _id: string;
+  token: string;
+  account: string;
+  email: string;
+  rewardedAt: string;
+}
+
 async function jsonFetch(url: string, body: unknown, method = "POST") {
   return fetch(url, {
     method,
@@ -326,7 +334,7 @@ export default class BlockchainClient {
     }
   }
 
-  async getPendingRegistrations(token: string) {
+  async getPendingRegistrations(token: string): Promise<Registration[]> {
     this.requireIdentityProof();
     const res = await jsonFetch(
       `${this.backend}/registrations/pending/${token}`,
@@ -338,7 +346,7 @@ export default class BlockchainClient {
     return res.json();
   }
 
-  async getRewardedRegistrations(token: string) {
+  async getRewardedRegistrations(token: string): Promise<Registration[]> {
     this.requireIdentityProof();
     const res = await jsonFetch(
       `${this.backend}/registrations/rewarded/${token}`,
@@ -370,7 +378,11 @@ export default class BlockchainClient {
     }
   }
 
-  async giveTokens(quantity: string, account: string, registrationId?: string) {
+  async giveTokens(
+    quantity: string,
+    account: string,
+    registrationId: string
+  ): Promise<Registration> {
     this.requireSession();
     const token = quantity.split(" ")[1];
     await this.session?.transact({
@@ -386,19 +398,18 @@ export default class BlockchainClient {
         }
       }
     });
-    if (registrationId) {
-      try {
-        const res = await fetch(
-          `${this.backend}/registrations/${registrationId}/rewarded`,
-          { method: "PUT" }
-        );
-        if (!res.ok) {
-          throw new Error("Failed to mark registration as rewarded!");
-        }
-      } catch (error) {
-        error.code = "SERVER_ERROR";
-        throw error;
+    try {
+      const res = await fetch(
+        `${this.backend}/registrations/${registrationId}/rewarded`,
+        { method: "PUT" }
+      );
+      if (!res.ok) {
+        throw new Error("Failed to mark registration as rewarded!");
       }
+      return res.json();
+    } catch (error) {
+      error.code = "SERVER_ERROR";
+      throw error;
     }
   }
 }
