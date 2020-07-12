@@ -387,12 +387,17 @@ export default class BlockchainClient {
       }
     });
     if (registrationId) {
-      const res = await fetch(
-        `${this.backend}/registrations/${registrationId}/rewarded`,
-        { method: "PUT" }
-      );
-      if (!res.ok) {
-        throw new Error("Failed to mark registration as rewarded!");
+      try {
+        const res = await fetch(
+          `${this.backend}/registrations/${registrationId}/rewarded`,
+          { method: "PUT" }
+        );
+        if (!res.ok) {
+          throw new Error("Failed to mark registration as rewarded!");
+        }
+      } catch (error) {
+        error.code = "SERVER_ERROR";
+        throw error;
       }
     }
   }
