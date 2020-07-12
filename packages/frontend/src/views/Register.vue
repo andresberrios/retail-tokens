@@ -49,6 +49,13 @@
               <b-icon icon="check2-circle" />
               Registration successful!
             </p>
+            <b-button
+              class="mt-3"
+              variant="success"
+              :to="{ name: 'token', params: { token } }"
+            >
+              Go back to {{ token }}
+            </b-button>
           </b-card>
         </div>
       </b-col>
