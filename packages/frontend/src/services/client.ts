@@ -101,7 +101,7 @@ interface AccountInfo {
   permissions: AccountPermission[];
 }
 
-interface Registration {
+export interface Registration {
   _id: string;
   token: string;
   account: string;

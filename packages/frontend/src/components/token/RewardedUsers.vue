@@ -33,14 +33,11 @@
 <script lang="ts">
 import { Vue, Component, Prop, Watch } from "vue-property-decorator";
 import Avatar from "../Avatar.vue";
+import { Registration } from "../../services/client";
 
-interface Registration {
-  _id: string;
-  token: string;
-  account: string;
-  email: string;
-}
-
+@Component({
+  components: { Avatar }
+})
 export default class RewardedUsers extends Vue {
   @Prop({ required: true })
   token!: string;

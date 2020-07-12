@@ -46,13 +46,7 @@
 <script lang="ts">
 import { Vue, Component, Prop, Watch } from "vue-property-decorator";
 import Avatar from "../Avatar.vue";
-
-interface Registration {
-  _id: string;
-  token: string;
-  account: string;
-  email: string;
-}
+import { Registration } from "../../services/client";
 
 @Component({
   components: { Avatar }

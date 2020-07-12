@@ -16,13 +16,6 @@ import { Vue, Component, Prop, Watch } from "vue-property-decorator";
 import PendingUsers from "./PendingUsers.vue";
 import RewardedUsers from "./RewardedUsers.vue";
 
-interface Registration {
-  _id: string;
-  token: string;
-  account: string;
-  email: string;
-}
-
 @Component({
   components: { PendingUsers, RewardedUsers }
 })
