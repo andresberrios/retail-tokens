@@ -23,6 +23,7 @@
 import { Component, Vue, Prop, Watch } from "vue-property-decorator";
 import Avatar from "../Avatar.vue";
 import TransfersTable, { Transfer } from "../TransfersTable.vue";
+import { DateTime } from "luxon";
 
 const limit = 10;
 
@@ -66,7 +67,7 @@ export default class TokenHistory extends Vue {
     this.skip += limit;
     const newItems = actions.map(a => ({
       id: a.trx_id.slice(0, 8),
-      date: a["@timestamp"].toString(),
+      date: DateTime.fromISO(a["@timestamp"].toString()).toFormat("FF"),
       from: a.act.data.from,
       to: a.act.data.to,
       amount: a.act.data.quantity,
