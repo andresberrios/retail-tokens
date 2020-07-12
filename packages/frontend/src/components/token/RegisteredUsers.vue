@@ -5,8 +5,8 @@
       Loading...
     </div>
     <div v-else>
-      <PendingUsers :token="token" />
-      <RewardedUsers :token="token" class="mt-5" />
+      <PendingUsers :token="token" @rewarded="onRewarded($event)" />
+      <RewardedUsers :token="token" class="mt-5" ref="rewarded" />
     </div>
   </div>
 </template>
@@ -15,6 +15,11 @@
 import { Vue, Component, Prop, Watch } from "vue-property-decorator";
 import PendingUsers from "./PendingUsers.vue";
 import RewardedUsers from "./RewardedUsers.vue";
+import { Registration } from "../../services/client";
+
+export default interface RegisteredUsers {
+  $refs: { rewarded: RewardedUsers };
+}
 
 @Component({
   components: { PendingUsers, RewardedUsers }
@@ -24,6 +29,10 @@ export default class RegisteredUsers extends Vue {
   token!: string;
 
   loading = true;
+
+  onRewarded(user: Registration) {
+    this.$refs.rewarded.addUser(user);
+  }
 
   @Watch("token", { immediate: true })
   async loadAllUsers() {

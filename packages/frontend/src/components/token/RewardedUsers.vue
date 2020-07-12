@@ -45,6 +45,10 @@ export default class RewardedUsers extends Vue {
   rewardedUsers: Registration[] | null = null;
   loading = true;
 
+  addUser(user: Registration) {
+    this.rewardedUsers?.unshift(user);
+  }
+
   @Watch("token", { immediate: true })
   async loadRewardedUsers() {
     this.loading = true;

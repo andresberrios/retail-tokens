@@ -62,11 +62,17 @@ export default class PendingUsers extends Vue {
 
   async sendToken(account: string, id: string) {
     try {
-      await this.$client.giveTokens(
+      const registration = await this.$client.giveTokens(
         `${this.amount} ${this.token}`,
         account,
         id
       );
+      if (this.pendingUsers) {
+        this.pendingUsers = this.pendingUsers.filter(
+          reg => reg.account !== account
+        );
+      }
+      this.$emit("rewarded", registration);
     } catch (error) {
       if (error.code === "SERVER_ERROR") {
         this.$root.$bvToast.toast("Failed to mark the user as rewarded!", {
