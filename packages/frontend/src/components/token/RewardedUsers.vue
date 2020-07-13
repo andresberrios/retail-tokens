@@ -52,9 +52,8 @@ export default class RewardedUsers extends Vue {
   @Watch("token", { immediate: true })
   async loadRewardedUsers() {
     this.loading = true;
-    this.rewardedUsers = await this.$client.getRewardedRegistrations(
-      this.token
-    );
+    const result = await this.$client.getRewardedRegistrations(this.token);
+    this.rewardedUsers = result.rows;
     this.loading = false;
   }
 }

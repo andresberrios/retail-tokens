@@ -1,56 +1,27 @@
 /* eslint-disable @typescript-eslint/camelcase */
 
-import { JsonRpc as Hyperion } from "@eoscafe/hyperion";
+import { JsonRpc as Hyperion, Action } from "@eoscafe/hyperion";
 import { JsonRpc } from "eosjs";
 import { SerialBuffer } from "eosjs/dist/eosjs-serialize";
 import { LinkSession } from "anchor-link";
+import { ResultSet, TraversableResultSet } from "./resultSet";
 
-export interface ResultSet<RowType> {
+interface TableRowsResultSet<RowType = unknown> {
   more: boolean;
   next_key: string;
   rows: RowType[];
 }
 
-export class TraversableResultSet<RowType> implements ResultSet<RowType> {
-  more = false;
-  next_key = "";
-  rows: RowType[] = [];
+interface TableScopesResultSet {
+  more: string;
+  rows: Array<{ scope: string }>;
+}
 
-  constructor(
-    data: ResultSet<RowType>,
-    public fetcher: (set: ResultSet<RowType>) => Promise<ResultSet<RowType>>
-  ) {
-    this.setData(data);
-  }
-
-  setData(data: ResultSet<RowType>) {
-    this.more = data.more;
-    this.next_key = data.next_key;
-    this.rows = data.rows;
-  }
-
-  addData(data: ResultSet<RowType>) {
-    this.setData({
-      ...data,
-      rows: [...this.rows, ...data.rows]
-    });
-  }
-
-  async fetchMore(expand = true) {
-    const data = await this.fetcher(this);
-    if (expand) {
-      this.addData(data);
-    }
-    return data;
-  }
-
-  async fetchRest(expand = true) {
-    const data = expand ? this : new TraversableResultSet(this, this.fetcher);
-    while (data.more) {
-      await data.fetchMore();
-    }
-    return data;
-  }
+interface BackendResultSet<RowType> {
+  more: boolean;
+  cursor: string;
+  rows: RowType[];
+  total: number;
 }
 
 export interface HolderBalances {
@@ -106,7 +77,7 @@ export interface Registration {
   token: string;
   account: string;
   email: string;
-  rewardedAt?: string;
+  rewardedAt: string | null;
 }
 
 async function jsonFetch(url: string, body: unknown, method = "POST") {
@@ -115,6 +86,34 @@ async function jsonFetch(url: string, body: unknown, method = "POST") {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body)
   });
+}
+
+function validatePreviousResultSet(set?: ResultSet) {
+  if (set && !set.more) {
+    throw new TypeError(
+      "Previous result set indicates there are no more results after itself"
+    );
+  }
+}
+
+function getCursorCheckpoint(set?: ResultSet) {
+  if (!set) {
+    return undefined;
+  }
+  if (set.checkpoint.type !== "cursor") {
+    throw new TypeError("Checkpoint type mismatch");
+  }
+  return set.checkpoint.value;
+}
+
+function getNextSkipCheckpoint(set?: ResultSet, limit = set?.limit || 20) {
+  if (!set) {
+    return 0;
+  }
+  if (set.checkpoint.type !== "skip") {
+    throw new TypeError("Checkpoint type mismatch");
+  }
+  return (set.checkpoint.value as number) + limit;
 }
 
 export default class BlockchainClient {
@@ -143,69 +142,81 @@ export default class BlockchainClient {
     return (await this.getAccountInfo(account)) !== undefined;
   }
 
-  validatePreviousResultSet(set?: ResultSet<unknown>) {
-    if (set && !set.more) {
-      throw new TypeError(
-        "Previous result set indicates there are no more results after itself"
-      );
-    }
-  }
-
   async getAccountTransfers(
     account: string,
-    skip = 0,
-    limit = 100,
-    sort: "desc" | "asc" = "desc"
-  ) {
+    previousSet?: ResultSet<Action<TransferData>>
+  ): Promise<TraversableResultSet<Action<TransferData>>> {
+    const limit = previousSet?.limit || 30;
+    const skip = getNextSkipCheckpoint(previousSet, limit);
     const data = await this.hyp.get_actions<TransferData>(account, {
       "act.account": this.contract,
       "act.name": "transfer",
+      sort: "desc",
       skip,
-      limit,
-      sort
+      limit
     });
-    return {
-      actions: data.actions,
-      total: data.total.value
-    };
+    return new TraversableResultSet(
+      {
+        more: skip + limit < data.total.value,
+        checkpoint: { type: "skip", value: skip },
+        limit,
+        rows: data.actions,
+        total: data.total.value
+      },
+      set => this.getAccountTransfers(account, set)
+    );
   }
 
   async getTokenTransfers(
     symbol: string,
-    skip = 0,
-    limit = 100,
-    sort: "desc" | "asc" = "desc"
-  ) {
+    previousSet?: ResultSet<Action<TransferData>>
+  ): Promise<TraversableResultSet<Action<TransferData>>> {
+    validatePreviousResultSet(previousSet);
+    const limit = previousSet?.limit || 30;
+    const skip = getNextSkipCheckpoint(previousSet, limit);
     const data = await this.hyp.get_actions<TransferData>(this.contract, {
       "act.account": this.contract,
       "act.name": "transfer",
       "transfer.symbol": symbol,
-      skip,
+      sort: "desc",
       limit,
-      sort
+      skip
     });
-    return {
-      actions: data.actions,
-      total: data.total.value
-    };
+    return new TraversableResultSet(
+      {
+        more: skip + limit < data.total.value,
+        checkpoint: { type: "skip", value: skip },
+        limit,
+        rows: data.actions,
+        total: data.total.value
+      },
+      set => this.getTokenTransfers(symbol, set)
+    );
   }
 
   async getTokens(
     account: string,
     previousSet?: ResultSet<string>
   ): Promise<TraversableResultSet<string>> {
-    this.validatePreviousResultSet(previousSet);
-    const data: ResultSet<{
+    validatePreviousResultSet(previousSet);
+    const limit = previousSet?.limit || 100;
+    const data: TableRowsResultSet<{
       balance: string;
     }> = await this.rpc.get_table_rows({
       json: true,
       code: this.contract,
       scope: account,
       table: "accounts",
-      lower_bound: previousSet && previousSet.next_key
+      limit,
+      lower_bound: getCursorCheckpoint(previousSet)
     });
     return new TraversableResultSet(
-      { ...data, rows: data.rows.map(r => r.balance) },
+      {
+        more: data.more,
+        checkpoint: { type: "cursor", value: data.next_key },
+        limit,
+        rows: data.rows.map(r => r.balance)
+      },
       set => this.getTokens(account, set)
     );
   }
@@ -213,14 +224,12 @@ export default class BlockchainClient {
   async getAllTokens(
     previousSet?: ResultSet<string>
   ): Promise<TraversableResultSet<string>> {
-    this.validatePreviousResultSet(previousSet);
-    const data: {
-      more: string;
-      rows: Array<{ scope: string }>;
-    } = await this.rpc.get_table_by_scope({
+    validatePreviousResultSet(previousSet);
+    const limit = previousSet?.limit || 100;
+    const data: TableScopesResultSet = await this.rpc.get_table_by_scope({
       code: "retailtokens",
       table: "stat",
-      lower_bound: previousSet?.next_key
+      lower_bound: getCursorCheckpoint(previousSet)
     });
 
     const tokens = data.rows.map(({ scope }) => {
@@ -232,7 +241,8 @@ export default class BlockchainClient {
     return new TraversableResultSet(
       {
         more: !!data.more,
-        next_key: data.more,
+        checkpoint: { type: "cursor", value: data.more },
+        limit,
         rows: tokens
       },
       set => this.getAllTokens(set)
@@ -242,9 +252,8 @@ export default class BlockchainClient {
   async getAllTokenStats(
     previousSet?: ResultSet<TokenStats>
   ): Promise<TraversableResultSet<TokenStats>> {
-    this.validatePreviousResultSet(previousSet);
     const data = await this.getAllTokens(
-      previousSet ? { ...previousSet, rows: [] } : undefined
+      previousSet && { ...previousSet, rows: [] }
     );
 
     const stats: TokenStats[] = await Promise.all(
@@ -269,14 +278,13 @@ export default class BlockchainClient {
   async getAllTokenHolders(
     previousSet?: ResultSet<HolderBalances>
   ): Promise<TraversableResultSet<HolderBalances>> {
-    this.validatePreviousResultSet(previousSet);
-    const data: {
-      more: string;
-      rows: Array<{ scope: string }>;
-    } = await this.rpc.get_table_by_scope({
+    validatePreviousResultSet(previousSet);
+    const limit = previousSet?.limit || 100;
+    const data: TableScopesResultSet = await this.rpc.get_table_by_scope({
       code: this.contract,
       table: "accounts",
-      lower_bound: previousSet && previousSet.next_key
+      limit,
+      lower_bound: getCursorCheckpoint(previousSet)
     });
 
     const accounts: HolderBalances[] = await Promise.all(
@@ -293,7 +301,8 @@ export default class BlockchainClient {
     return new TraversableResultSet(
       {
         more: !!data.more,
-        next_key: data.more,
+        checkpoint: { type: "cursor", value: data.more },
+        limit,
         rows: accounts
       },
       set => this.getAllTokenHolders(set)
@@ -304,7 +313,7 @@ export default class BlockchainClient {
     symbol: string,
     previousSet?: ResultSet<TokenHolder>
   ): Promise<TraversableResultSet<TokenHolder>> {
-    this.validatePreviousResultSet(previousSet);
+    validatePreviousResultSet(previousSet);
     const data = await this.getAllTokenHolders(
       previousSet ? { ...previousSet, rows: [] } : undefined
     );
@@ -334,28 +343,66 @@ export default class BlockchainClient {
     }
   }
 
-  async getPendingRegistrations(token: string): Promise<Registration[]> {
+  async getPendingRegistrations(
+    token: string,
+    previousSet?: ResultSet<Registration>
+  ): Promise<TraversableResultSet<Registration>> {
     this.requireIdentityProof();
+    const limit = previousSet?.limit || 20;
     const res = await jsonFetch(
       `${this.backend}/registrations/pending/${token}`,
-      this.session?.metadata.proof
+      {
+        proof: this.session?.metadata.proof,
+        limit,
+        cursor: getCursorCheckpoint(previousSet)
+      }
     );
     if (!res.ok) {
       throw new Error("Could not fetch pending registrations");
     }
-    return res.json();
+    const data: BackendResultSet<Registration> = await res.json();
+
+    return new TraversableResultSet(
+      {
+        more: data.more,
+        checkpoint: { type: "cursor", value: data.cursor },
+        limit,
+        rows: data.rows,
+        total: data.total
+      },
+      set => this.getPendingRegistrations(token, set)
+    );
   }
 
-  async getRewardedRegistrations(token: string): Promise<Registration[]> {
+  async getRewardedRegistrations(
+    token: string,
+    previousSet?: ResultSet<Registration>
+  ): Promise<TraversableResultSet<Registration>> {
     this.requireIdentityProof();
+    const limit = previousSet?.limit || 20;
     const res = await jsonFetch(
       `${this.backend}/registrations/rewarded/${token}`,
-      this.session?.metadata.proof
+      {
+        proof: this.session?.metadata.proof,
+        limit,
+        cursor: getCursorCheckpoint(previousSet)
+      }
     );
     if (!res.ok) {
       throw new Error("Could not fetch rewarded registrations");
     }
-    return res.json();
+    const data: BackendResultSet<Registration> = await res.json();
+
+    return new TraversableResultSet(
+      {
+        more: data.more,
+        checkpoint: { type: "cursor", value: data.cursor },
+        limit,
+        rows: data.rows,
+        total: data.total
+      },
+      set => this.getRewardedRegistrations(token, set)
+    );
   }
 
   async submitRegistration(token: string, account: string, email: string) {

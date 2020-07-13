@@ -8,7 +8,7 @@
         <TokenHolders :token="token" class="my-5" />
       </b-tab>
       <b-tab v-if="isTokenIssuer" title="Registered Users" lazy>
-        <RegisteredUsers :token="token" class="my-4" />
+        <Registrations :token="token" class="my-4" />
       </b-tab>
     </b-tabs>
   </div>
@@ -19,10 +19,10 @@ import { Vue, Component, Prop } from "vue-property-decorator";
 import Avatar from "../Avatar.vue";
 import TokenHistory from "./TokenHistory.vue";
 import TokenHolders from "./TokenHolders.vue";
-import RegisteredUsers from "./RegisteredUsers.vue";
+import Registrations from "./Registrations.vue";
 
 @Component({
-  components: { Avatar, TokenHistory, TokenHolders, RegisteredUsers }
+  components: { Avatar, TokenHistory, TokenHolders, Registrations }
 })
 export default class TokenInfo extends Vue {
   @Prop({ required: true })

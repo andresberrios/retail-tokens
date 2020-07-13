@@ -15,7 +15,8 @@ async function authGuard(
   const {
     transaction,
     signature
-  }: { transaction?: number[]; signature?: string } = ctx.request.body || {};
+  }: { transaction?: number[]; signature?: string } =
+    (ctx.request.body && ctx.request.body.proof) || {};
   if (!transaction || !signature) {
     return (ctx.response.status = 400);
   }
@@ -40,15 +41,55 @@ async function authGuard(
 
 export function loadRoutes(router: Router, collection: Collection) {
   router.post("/registrations/pending/:token", authGuard, async ctx => {
-    ctx.body = await collection
-      .find({ token: ctx.params.token, rewarded: { $ne: true } })
-      .toArray();
+    const filter = {
+      token: ctx.params.token,
+      rewardedAt: null
+    };
+    const cursor = collection
+      .find({
+        ...filter,
+        _id: ctx.body.cursor ? { $lt: ctx.body.cursor } : undefined
+      })
+      .limit(ctx.body.limit || 100)
+      .sort("_id", -1);
+    const [total, remaining, rows] = await Promise.all([
+      collection.find(filter).count(),
+      cursor.count(),
+      cursor.toArray()
+    ]);
+    ctx.body = {
+      more: rows.length < remaining,
+      cursor: rows[rows.length - 1]._id,
+      rows,
+      total
+    };
   });
 
   router.post("/registrations/rewarded/:token", authGuard, async ctx => {
-    ctx.body = await collection
-      .find({ token: ctx.params.token, rewarded: true })
-      .toArray();
+    const filter = {
+      token: ctx.params.token,
+      rewardedAt: { $ne: null }
+    };
+    const cursor = collection
+      .find({
+        ...filter,
+        rewardedAt: ctx.body.cursor
+          ? { $lt: ctx.body.cursor }
+          : filter.rewardedAt
+      })
+      .limit(ctx.body.limit || 100)
+      .sort("rewardedAt", -1);
+    const [total, remaining, rows] = await Promise.all([
+      collection.find(filter).count(),
+      cursor.count(),
+      cursor.toArray()
+    ]);
+    ctx.body = {
+      more: rows.length < remaining,
+      cursor: rows[rows.length - 1].rewardedAt,
+      rows,
+      total
+    };
   });
 
   router.post("/registrations", async ctx => {
@@ -81,7 +122,8 @@ export function loadRoutes(router: Router, collection: Collection) {
         _id: new ObjectID().toHexString(),
         token,
         account,
-        email
+        email,
+        rewardedAt: null
       });
       ctx.body = result.ops[0];
     } catch (error) {
@@ -95,7 +137,7 @@ export function loadRoutes(router: Router, collection: Collection) {
   router.put("/registrations/:id/rewarded", async ctx => {
     const result = await collection.findOneAndUpdate(
       { _id: ctx.params.id },
-      { $set: { rewarded: true } },
+      { $set: { rewardedAt: new Date().toISOString() } },
       { returnOriginal: false }
     );
     if (result.value) {

@@ -86,7 +86,8 @@ export default class PendingUsers extends Vue {
   @Watch("token", { immediate: true })
   async loadRegisteredUsers() {
     this.loading = true;
-    this.pendingUsers = await this.$client.getPendingRegistrations(this.token);
+    const results = await this.$client.getPendingRegistrations(this.token);
+    this.pendingUsers = results.rows;
     this.loading = false;
   }
 }

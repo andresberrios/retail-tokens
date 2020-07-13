@@ -12,8 +12,8 @@
     <TransfersTable
       v-else
       :transfers="items"
-      :has-more="hasMore"
-      :loading-more="loadingMore"
+      :has-more="result.more"
+      :loading-more="result.loadingMore"
       @load-more="loadMore"
     />
   </div>
@@ -24,8 +24,9 @@ import { Component, Vue, Prop, Watch } from "vue-property-decorator";
 import Avatar from "../Avatar.vue";
 import TransfersTable, { Transfer } from "../TransfersTable.vue";
 import { DateTime } from "luxon";
-
-const limit = 10;
+import { TraversableResultSet } from "../../services/resultSet";
+import { Action } from "@eoscafe/hyperion";
+import { TransferData } from "../../services/client";
 
 @Component({
   components: { Avatar, TransfersTable }
@@ -34,47 +35,34 @@ export default class TokenHistory extends Vue {
   @Prop({ required: true })
   token!: string;
 
-  items: Transfer[] = [];
-  skip = 0;
-  total = 0;
+  result: TraversableResultSet<Action<TransferData>> | null = null;
 
   loading = true;
-  loadingMore = false;
-
-  get hasMore() {
-    return this.items.length < this.total;
-  }
 
   @Watch("token", { immediate: true })
   async initialLoad() {
     this.loading = true;
-    this.items = [];
-    this.skip = 0;
     if (this.token) {
-      await this.loadMore();
+      this.result = await this.$client.getTokenTransfers(this.token);
     }
     this.loading = false;
   }
 
+  get items(): Transfer[] {
+    return !this.result
+      ? []
+      : this.result.rows.map(a => ({
+          id: a.trx_id.slice(0, 8),
+          date: DateTime.fromISO(a["@timestamp"].toString()).toFormat("FF"),
+          from: a.act.data.from,
+          to: a.act.data.to,
+          amount: a.act.data.quantity,
+          memo: a.act.data.memo
+        }));
+  }
+
   async loadMore() {
-    this.loadingMore = true;
-    const { actions, total } = await this.$client.getTokenTransfers(
-      this.token,
-      this.skip,
-      limit
-    );
-    this.total = total;
-    this.skip += limit;
-    const newItems = actions.map(a => ({
-      id: a.trx_id.slice(0, 8),
-      date: DateTime.fromISO(a["@timestamp"].toString()).toFormat("FF"),
-      from: a.act.data.from,
-      to: a.act.data.to,
-      amount: a.act.data.quantity,
-      memo: a.act.data.memo
-    }));
-    this.items = this.items.concat(newItems);
-    this.loadingMore = false;
+    await this.result?.fetchMore();
   }
 }
 </script>

@@ -57,8 +57,8 @@ export default class AccountHistory extends Vue {
   }
 
   async loadHistory() {
-    const { actions } = await this.$client.getAccountTransfers(this.account);
-    this.items = actions.map(a => ({
+    const result = await this.$client.getAccountTransfers(this.account);
+    this.items = result.rows.map(a => ({
       id: a.trx_id.slice(0, 8),
       date: DateTime.fromISO(a["@timestamp"].toString()).toFormat("FF"),
       from: a.act.data.from,
@@ -69,9 +69,9 @@ export default class AccountHistory extends Vue {
   }
 
   async loadTokenBalance() {
-    const data = await this.$client.getTokens(this.account);
-    await data.fetchRest();
-    this.options = data.rows.map(b => ({
+    const result = await this.$client.getTokens(this.account);
+    await result.fetchRest();
+    this.options = result.rows.map(b => ({
       value: b.split(" ")[1],
       text: b.split(" ")[1]
     }));
