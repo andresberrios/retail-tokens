@@ -8,19 +8,22 @@
       <p>This account has no transactions</p>
     </div>
     <div v-else>
-      <label for="filter-token">Filter by Token</label>
-      <b-form-select
-        v-model="selectedToken"
-        :options="options"
-        id="filter-token"
-        class="my-3"
-      >
-        <template v-slot:first>
-          <b-form-select-option :value="null">
-            -- All tokens --
-          </b-form-select-option>
-        </template>
-      </b-form-select>
+      <b-form inline class="my-4">
+        <label for="filter-token">Filter by Token:</label>
+        <b-form-select
+          v-model="selectedToken"
+          :options="options"
+          id="filter-token"
+          class="ml-3"
+          inline
+        >
+          <template v-slot:first>
+            <b-form-select-option :value="null">
+              -- All tokens --
+            </b-form-select-option>
+          </template>
+        </b-form-select>
+      </b-form>
       <TransfersTable :transfers="filteredTokens" />
     </div>
   </div>
