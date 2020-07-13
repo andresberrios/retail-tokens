@@ -9,7 +9,8 @@
     "url": "git+https://github.com/andresberrios/retail-tokens.git"
   },
   "scripts": {
-    "start:production": "TS_NODE_TRANSPILE_ONLY=true node -r dotenv/config -r ts-node/register src/server.ts",
+    "build": "../../node_modules/.bin/tsc",
+    "start:production": "node -r dotenv/config dist/server.js",
     "start": "node -r dotenv/config -r ts-node/register src/server.ts",
     "serve": "nodemon -e ts",
     "db": "docker run --rm -p 27017:27017 mongo:4.0.6"
@@ -18,8 +19,6 @@
     "nodemon": "^2.0.4"
   },
   "dependencies": {
-    "ts-node": "^8.10.2",
-    "typescript": "~3.9.3",
     "@koa/cors": "^3.0.0",
     "dotenv": "^8.2.0",
     "eosjs-ecc": "^4.0.7",
