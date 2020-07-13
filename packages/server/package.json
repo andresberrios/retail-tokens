@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "ts-node": "^8.10.2",
+    "typescript": "~3.9.3",
     "@koa/cors": "^3.0.0",
     "dotenv": "^8.2.0",
     "eosjs-ecc": "^4.0.7",
