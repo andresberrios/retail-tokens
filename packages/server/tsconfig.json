@@ -2,6 +2,7 @@
   "extends": "../../tsconfig.json",
   "files": ["src/server.ts"],
   "compilerOptions": {
-    "outDir": "dist"
+    "outDir": "dist",
+    "importHelpers": false
   }
 }
