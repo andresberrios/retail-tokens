@@ -2,7 +2,8 @@
   "name": "root",
   "private": true,
   "scripts": {
-    "clean": "lerna clean -y && rm -rf node_modules"
+    "clean": "lerna clean -y && rm -rf node_modules",
+    "start": "cd packages/server && npm start"
   },
   "devDependencies": {
     "@types/koa": "^2.11.3",
