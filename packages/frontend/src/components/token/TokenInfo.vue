@@ -19,7 +19,7 @@ import { Vue, Component, Prop } from "vue-property-decorator";
 import Avatar from "../Avatar.vue";
 import TokenHistory from "./TokenHistory.vue";
 import TokenHolders from "./TokenHolders.vue";
-import Registrations from "./Registrations.vue";
+import Registrations from "../registrations/Registrations.vue";
 
 @Component({
   components: { Avatar, TokenHistory, TokenHolders, Registrations }
