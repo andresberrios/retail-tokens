@@ -1,4 +1,4 @@
-/// <reference types="./serverTypes" />
+/// <reference types="./server-types" />
 
 import { recover } from "eosjs-ecc";
 import { Api, JsonRpc, Numeric } from "eosjs";
