@@ -9,6 +9,7 @@
     "url": "git+https://github.com/andresberrios/retail-tokens.git"
   },
   "scripts": {
+    "start:production": "TS_NODE_TRANSPILE_ONLY=true node -r dotenv/config -r ts-node/register src/server.ts",
     "start": "node -r dotenv/config -r ts-node/register src/server.ts",
     "serve": "nodemon -e ts",
     "db": "docker run --rm -p 27017:27017 mongo:4.0.6"
