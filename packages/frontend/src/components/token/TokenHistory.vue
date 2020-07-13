@@ -23,7 +23,6 @@
 import { Component, Vue, Prop, Watch } from "vue-property-decorator";
 import Avatar from "../Avatar.vue";
 import TransfersTable, { Transfer } from "../TransfersTable.vue";
-import { DateTime } from "luxon";
 import { TraversableResultSet } from "../../services/resultSet";
 import { Action } from "@eoscafe/hyperion";
 import { TransferData } from "../../services/client";
