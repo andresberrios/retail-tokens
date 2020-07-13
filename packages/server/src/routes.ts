@@ -48,9 +48,11 @@ export function loadRoutes(router: Router, collection: Collection) {
     const cursor = collection
       .find({
         ...filter,
-        _id: ctx.body.cursor ? { $lt: ctx.body.cursor } : undefined
+        ...(ctx.request.body.cursor
+          ? { _id: { $lt: ctx.request.body.cursor } }
+          : {})
       })
-      .limit(ctx.body.limit || 100)
+      .limit(ctx.request.body.limit || 100)
       .sort("_id", -1);
     const [total, remaining, rows] = await Promise.all([
       collection.find(filter).count(),
@@ -59,7 +61,7 @@ export function loadRoutes(router: Router, collection: Collection) {
     ]);
     ctx.body = {
       more: rows.length < remaining,
-      cursor: rows[rows.length - 1]._id,
+      cursor: rows.length > 0 ? rows[rows.length - 1]._id : undefined,
       rows,
       total
     };
@@ -73,11 +75,11 @@ export function loadRoutes(router: Router, collection: Collection) {
     const cursor = collection
       .find({
         ...filter,
-        rewardedAt: ctx.body.cursor
-          ? { $lt: ctx.body.cursor }
+        rewardedAt: ctx.request.body.cursor
+          ? { $lt: ctx.request.body.cursor }
           : filter.rewardedAt
       })
-      .limit(ctx.body.limit || 100)
+      .limit(ctx.request.body.limit || 100)
       .sort("rewardedAt", -1);
     const [total, remaining, rows] = await Promise.all([
       collection.find(filter).count(),
@@ -86,7 +88,7 @@ export function loadRoutes(router: Router, collection: Collection) {
     ]);
     ctx.body = {
       more: rows.length < remaining,
-      cursor: rows[rows.length - 1].rewardedAt,
+      cursor: rows.length > 0 ? rows[rows.length - 1].rewardedAt : undefined,
       rows,
       total
     };

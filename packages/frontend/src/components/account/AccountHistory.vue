@@ -30,7 +30,7 @@
 import { Component, Vue, Prop, Watch } from "vue-property-decorator";
 import Avatar from "../Avatar.vue";
 import TransfersTable, { Transfer } from "../TransfersTable.vue";
-import { DateTime } from "luxon";
+import { formatDate } from "../../services/dateFormatter";
 
 @Component({
   components: { Avatar, TransfersTable }
@@ -60,7 +60,7 @@ export default class AccountHistory extends Vue {
     const result = await this.$client.getAccountTransfers(this.account);
     this.items = result.rows.map(a => ({
       id: a.trx_id.slice(0, 8),
-      date: DateTime.fromISO(a["@timestamp"].toString()).toFormat("FF"),
+      date: formatDate(a["@timestamp"].toString()),
       from: a.act.data.from,
       to: a.act.data.to,
       amount: a.act.data.quantity,

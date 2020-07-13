@@ -4,7 +4,7 @@
       <b-spinner label="Spinning"></b-spinner>
       Loading...
     </div>
-    <div v-else-if="rewardedUsers && rewardedUsers.length === 0">
+    <div v-else-if="rewardedUsers.length === 0">
       <p>No users rewarded yet</p>
     </div>
     <div v-else>
@@ -23,6 +23,9 @@
             <b-col sm="4" md="3">
               {{ user.email }}
             </b-col>
+            <b-col sm="4" md="3">
+              {{ user.rewardedAt }}
+            </b-col>
           </b-row>
         </b-list-group-item>
       </b-list-group>
@@ -34,6 +37,8 @@
 import { Vue, Component, Prop, Watch } from "vue-property-decorator";
 import Avatar from "../Avatar.vue";
 import { Registration } from "../../services/client";
+import { formatDate } from "../../services/dateFormatter";
+import { TraversableResultSet } from "../../services/resultSet";
 
 @Component({
   components: { Avatar }
@@ -42,18 +47,26 @@ export default class RewardedUsers extends Vue {
   @Prop({ required: true })
   token!: string;
 
-  rewardedUsers: Registration[] | null = null;
+  result: TraversableResultSet<Registration> | null = null;
   loading = true;
 
   addUser(user: Registration) {
-    this.rewardedUsers?.unshift(user);
+    this.result?.rows.unshift(user);
+  }
+
+  get rewardedUsers(): Registration[] {
+    return this.result === null
+      ? []
+      : this.result.rows.map(r => ({
+          ...r,
+          rewardedAt: formatDate(r.rewardedAt)
+        }));
   }
 
   @Watch("token", { immediate: true })
   async loadRewardedUsers() {
     this.loading = true;
-    const result = await this.$client.getRewardedRegistrations(this.token);
-    this.rewardedUsers = result.rows;
+    this.result = await this.$client.getRewardedRegistrations(this.token);
     this.loading = false;
   }
 }

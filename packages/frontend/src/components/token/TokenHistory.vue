@@ -27,6 +27,7 @@ import { DateTime } from "luxon";
 import { TraversableResultSet } from "../../services/resultSet";
 import { Action } from "@eoscafe/hyperion";
 import { TransferData } from "../../services/client";
+import { formatDate } from "../../services/dateFormatter";
 
 @Component({
   components: { Avatar, TransfersTable }
@@ -53,7 +54,7 @@ export default class TokenHistory extends Vue {
       ? []
       : this.result.rows.map(a => ({
           id: a.trx_id.slice(0, 8),
-          date: DateTime.fromISO(a["@timestamp"].toString()).toFormat("FF"),
+          date: formatDate(a["@timestamp"].toString()),
           from: a.act.data.from,
           to: a.act.data.to,
           amount: a.act.data.quantity,
