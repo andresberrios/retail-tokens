@@ -7,6 +7,7 @@ namespace eosio
                       const asset &maximum_supply)
    {
       require_auth(get_self());
+      check(is_account(issuer), "issuer account does not exist");
 
       auto sym = maximum_supply.symbol;
       check(sym.is_valid(), "invalid symbol name");
