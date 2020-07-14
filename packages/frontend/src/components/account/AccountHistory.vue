@@ -23,8 +23,17 @@
             </b-form-select-option>
           </template>
         </b-form-select>
+        <span v-if="selectedToken" class="ml-2">
+          Showing {{ filteredTokens.length }} of {{ items.length }} loaded
+          transactions
+        </span>
       </b-form>
-      <TransfersTable :transfers="filteredTokens" />
+      <TransfersTable
+        :transfers="filteredTokens"
+        :has-more="result.more"
+        :loading-more="result.loadingMore"
+        @load-more="loadMore"
+      />
     </div>
   </div>
 </template>
@@ -32,8 +41,11 @@
 <script lang="ts">
 import { Component, Vue, Prop, Watch } from "vue-property-decorator";
 import Avatar from "../Avatar.vue";
-import TransfersTable, { Transfer } from "../TransfersTable.vue";
+import TransfersTable from "../TransfersTable.vue";
 import { formatDate } from "../../services/dateFormatter";
+import { TraversableResultSet } from "../../services/resultSet";
+import { Action } from "@eoscafe/hyperion";
+import { TransferData } from "../../services/client";
 
 @Component({
   components: { Avatar, TransfersTable }
@@ -42,12 +54,14 @@ export default class AccountHistory extends Vue {
   @Prop({ required: true })
   account!: string;
 
-  items: Transfer[] | null = null;
   selectedToken: string | null = null;
   options: { value: string; text: string }[] | null = null;
   loading = true;
 
+  result: TraversableResultSet<Action<TransferData>> | null = null;
+
   get filteredTokens() {
+    this.items;
     if (this.items === null) {
       return this.items;
     }
@@ -59,22 +73,27 @@ export default class AccountHistory extends Vue {
     );
   }
 
-  async loadHistory() {
-    const result = await this.$client.getAccountTransfers(this.account);
-    this.items = result.rows.map(a => ({
-      id: a.trx_id.slice(0, 8),
-      date: formatDate(a["@timestamp"].toString()),
-      from: a.act.data.from,
-      to: a.act.data.to,
-      amount: a.act.data.quantity,
-      memo: a.act.data.memo
-    }));
+  get items() {
+    return !this.result
+      ? []
+      : this.result.rows.map(a => ({
+          id: a.trx_id.slice(0, 8),
+          date: formatDate(a["@timestamp"].toString()),
+          from: a.act.data.from,
+          to: a.act.data.to,
+          amount: a.act.data.quantity,
+          memo: a.act.data.memo
+        }));
+  }
+
+  async initialLoad() {
+    this.result = await this.$client.getAccountTransfers(this.account);
   }
 
   async loadTokenBalance() {
-    const result = await this.$client.getTokens(this.account);
-    await result.fetchRest();
-    this.options = result.rows.map(b => ({
+    const data = await this.$client.getTokens(this.account);
+    await data.fetchRest();
+    this.options = data.rows.map(b => ({
       value: b.split(" ")[1],
       text: b.split(" ")[1]
     }));
@@ -83,8 +102,12 @@ export default class AccountHistory extends Vue {
   @Watch("account", { immediate: true })
   async loadTransactions() {
     this.loading = true;
-    await Promise.all([this.loadHistory(), this.loadTokenBalance()]);
+    await Promise.all([this.initialLoad(), this.loadTokenBalance()]);
     this.loading = false;
+  }
+
+  async loadMore() {
+    await this.result?.fetchMore();
   }
 }
 </script>
