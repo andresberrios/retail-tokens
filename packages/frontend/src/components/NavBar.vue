@@ -13,7 +13,12 @@
               placeholder="Search account"
               v-model="searchedAccount"
             ></b-form-input>
-            <b-button size="md" class="my-2 my-sm-0" type="submit">
+            <b-button
+              variant="outline-primary"
+              size="md"
+              class="my-2 my-sm-0"
+              type="submit"
+            >
               Search
             </b-button>
           </b-nav-form>

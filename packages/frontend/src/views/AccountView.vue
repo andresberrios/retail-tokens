@@ -22,8 +22,7 @@
           <b-tab title="Account">
             <h4>Token Balance</h4>
             <TokenBalances :account="account" />
-            <hr class="my-2" />
-            <h4 class="my-3">Transactions</h4>
+            <h4 class="mt-5 mb-3">Transactions</h4>
             <AccountHistory :account="account" />
           </b-tab>
           <b-tab

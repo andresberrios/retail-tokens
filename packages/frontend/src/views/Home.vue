@@ -20,6 +20,7 @@
           </b-col>
           <b-col sm="2">
             <b-button
+              variant="outline-success"
               :to="{ name: 'register', params: { token: token.symbol } }"
             >
               Register
