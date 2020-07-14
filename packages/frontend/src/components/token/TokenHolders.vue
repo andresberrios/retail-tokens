@@ -24,7 +24,7 @@
           ><span class="mx-2">{{ user.balance }}</span>
         </router-link>
       </b-list-group-item>
-      <b-list-group-item v-if="result.more" class="bg-dark text-center">
+      <div v-if="result.more" class="text-center mt-3">
         <div v-if="result.loadingMore" class="text-light">
           <b-spinner variant="light" class="align-middle mr-2" />
           <strong>Loading...</strong>
@@ -32,7 +32,7 @@
         <b-button v-else size="sm" @click="loadMore">
           Load more
         </b-button>
-      </b-list-group-item>
+      </div>
     </b-list-group>
   </div>
 </template>

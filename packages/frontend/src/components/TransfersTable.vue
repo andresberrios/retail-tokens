@@ -34,7 +34,7 @@
         </router-link>
       </template>
     </b-table>
-    <div v-if="hasMore" class="bg-dark p-3 text-center">
+    <div v-if="hasMore" class="p-3 text-center">
       <div v-if="loadingMore" class="text-light">
         <b-spinner variant="light" class="align-middle mr-2" />
         <strong>Loading...</strong>
