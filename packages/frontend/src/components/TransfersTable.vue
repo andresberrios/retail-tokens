@@ -7,7 +7,7 @@
       :bordered="true"
       head-variant="dark"
       table-variant="dark"
-      stacked="sm"
+      stacked="md"
       show-empty
       class="m-0"
     >
