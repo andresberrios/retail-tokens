@@ -9,26 +9,46 @@
     </div>
     <div v-else>
       <h3>Rewarded users</h3>
-      <b-list-group class="mt-3">
-        <b-list-group-item v-for="user in rewardedUsers" :key="user.account">
-          <b-row>
-            <b-col sm="4" lg="2">
+      <b-table-simple
+        hover
+        responsive
+        class="mt-4 mb-0"
+        style="border-bottom: 1px solid rgba(0, 0, 0, 0.6)"
+        ><b-thead>
+          <b-tr class="bg-dark">
+            <b-th>Account</b-th>
+            <b-th>Email</b-th>
+            <b-th>Rewarded At</b-th>
+          </b-tr>
+        </b-thead>
+        <b-tbody>
+          <b-tr v-for="user in rewardedUsers" :key="user._id">
+            <b-td>
               <router-link
                 :to="{ name: 'account', params: { account: user.account } }"
               >
                 <Avatar size="2em" :value="user.account" type="account" />
                 {{ user.account }}
               </router-link>
-            </b-col>
-            <b-col sm="4" md="3">
+            </b-td>
+            <b-td>
               {{ user.email }}
-            </b-col>
-            <b-col sm="4" md="3">
+            </b-td>
+            <b-td>
               {{ user.rewardedAt }}
-            </b-col>
-          </b-row>
-        </b-list-group-item>
-      </b-list-group>
+            </b-td>
+          </b-tr>
+        </b-tbody>
+      </b-table-simple>
+      <div v-if="result.more" class="p-3 text-center">
+        <div v-if="result.loadingMore" class="text-light">
+          <b-spinner variant="light" class="align-middle mr-2" />
+          <strong>Loading...</strong>
+        </div>
+        <b-button v-else size="sm" @click="loadMore">
+          Load more
+        </b-button>
+      </div>
     </div>
   </div>
 </template>
@@ -61,6 +81,10 @@ export default class RewardedUsers extends Vue {
           ...r,
           rewardedAt: formatDate(r.rewardedAt)
         }));
+  }
+
+  async loadMore() {
+    await this.result?.fetchMore();
   }
 
   @Watch("token", { immediate: true })

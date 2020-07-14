@@ -40,7 +40,11 @@
               {{ user.email }}
             </b-td>
             <b-td>
-              <b-button size="sm" @click="sendToken(user.account, user._id)">
+              <b-button
+                variant="outline-success"
+                size="sm"
+                @click="sendToken(user.account, user._id)"
+              >
                 Send Token
               </b-button>
             </b-td>
