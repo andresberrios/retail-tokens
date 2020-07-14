@@ -41,7 +41,7 @@
 <script lang="ts">
 import { Component, Vue, Prop, Watch } from "vue-property-decorator";
 import Avatar from "../Avatar.vue";
-import TransfersTable from "../TransfersTable.vue";
+import TransfersTable, { Transfer } from "../TransfersTable.vue";
 import { formatDate } from "../../services/dateFormatter";
 import { TraversableResultSet } from "../../services/resultSet";
 import { Action } from "@eoscafe/hyperion";
@@ -60,7 +60,7 @@ export default class AccountHistory extends Vue {
 
   result: TraversableResultSet<Action<TransferData>> | null = null;
 
-  get filteredTokens() {
+  get filteredTokens(): Transfer[] {
     this.items;
     if (this.items === null) {
       return this.items;
@@ -73,7 +73,7 @@ export default class AccountHistory extends Vue {
     );
   }
 
-  get items() {
+  get items(): Transfer[] {
     return !this.result
       ? []
       : this.result.rows.map(a => ({

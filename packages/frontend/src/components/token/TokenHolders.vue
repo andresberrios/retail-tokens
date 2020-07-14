@@ -24,6 +24,15 @@
           ><span class="mx-2">{{ user.balance }}</span>
         </router-link>
       </b-list-group-item>
+      <b-list-group-item v-if="result.more" class="bg-dark text-center">
+        <div v-if="result.loadingMore" class="text-light">
+          <b-spinner variant="light" class="align-middle mr-2" />
+          <strong>Loading...</strong>
+        </div>
+        <b-button v-else size="sm" @click="loadMore">
+          Load more
+        </b-button>
+      </b-list-group-item>
     </b-list-group>
   </div>
 </template>
@@ -32,6 +41,7 @@
 import { Component, Vue, Prop, Watch } from "vue-property-decorator";
 import Avatar from "../Avatar.vue";
 import { TokenHolder } from "../../services/client";
+import { TraversableResultSet } from "../../services/resultSet";
 
 @Component({
   components: { Avatar }
@@ -40,15 +50,23 @@ export default class UserList extends Vue {
   @Prop({ required: true })
   token!: string;
 
-  users: TokenHolder[] | null = null;
+  result: TraversableResultSet<TokenHolder> | null = null;
 
   loading = true;
+  loadingMore = false;
+
+  get users(): TokenHolder[] {
+    return !this.result ? [] : this.result.rows;
+  }
+
+  async loadMore() {
+    await this.result?.fetchMore();
+  }
 
   @Watch("token", { immediate: true })
-  async loadUsers() {
+  async loadInitialUsers() {
     this.loading = true;
-    const result = await this.$client.getTokenHolders(this.token);
-    this.users = result.rows;
+    this.result = await this.$client.getTokenHolders(this.token);
     this.loading = false;
   }
 }

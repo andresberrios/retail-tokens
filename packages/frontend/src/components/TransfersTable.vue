@@ -39,9 +39,9 @@
         <b-spinner variant="light" class="align-middle mr-2" />
         <strong>Loading...</strong>
       </div>
-      <b-button v-else size="sm" @click="$emit('load-more')"
-        >Load more</b-button
-      >
+      <b-button v-else size="sm" @click="$emit('load-more')">
+        Load more
+      </b-button>
     </div>
   </div>
 </template>
