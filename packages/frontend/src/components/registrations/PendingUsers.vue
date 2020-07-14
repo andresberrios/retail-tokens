@@ -38,6 +38,15 @@
             </b-col>
           </b-row>
         </b-list-group-item>
+        <b-list-group-item v-if="result.more" class="bg-dark text-center">
+          <div v-if="result.loadingMore" class="text-light">
+            <b-spinner variant="light" class="align-middle mr-2" />
+            <strong>Loading...</strong>
+          </div>
+          <b-button v-else size="sm" @click="loadMore">
+            Load more
+          </b-button>
+        </b-list-group-item>
       </b-list-group>
     </div>
   </div>
@@ -47,6 +56,7 @@
 import { Vue, Component, Prop, Watch } from "vue-property-decorator";
 import Avatar from "../Avatar.vue";
 import { Registration } from "../../services/client";
+import { TraversableResultSet } from "../../services/resultSet";
 
 @Component({
   components: { Avatar }
@@ -56,7 +66,7 @@ export default class PendingUsers extends Vue {
   token!: string;
 
   amount = 0;
-  pendingUsers: Registration[] | null = null;
+  result: TraversableResultSet<Registration> | null = null;
 
   loading = true;
 
@@ -67,11 +77,7 @@ export default class PendingUsers extends Vue {
         account,
         id
       );
-      if (this.pendingUsers) {
-        this.pendingUsers = this.pendingUsers.filter(
-          reg => reg.account !== account
-        );
-      }
+      this.removeUser(account);
       this.$emit("rewarded", registration);
     } catch (error) {
       if (error.code === "SERVER_ERROR") {
@@ -83,12 +89,27 @@ export default class PendingUsers extends Vue {
     }
   }
 
+  get pendingUsers(): Registration[] {
+    return !this.result ? [] : this.result.rows;
+  }
+
+  removeUser(account: string) {
+    if (this.result) {
+      this.result.rows = this.result.rows.filter(
+        reg => reg.account !== account
+      );
+    }
+  }
+
   @Watch("token", { immediate: true })
   async loadRegisteredUsers() {
     this.loading = true;
-    const results = await this.$client.getPendingRegistrations(this.token);
-    this.pendingUsers = results.rows;
+    this.result = await this.$client.getPendingRegistrations(this.token);
     this.loading = false;
+  }
+
+  async loadMore() {
+    await this.result?.fetchMore();
   }
 }
 </script>
