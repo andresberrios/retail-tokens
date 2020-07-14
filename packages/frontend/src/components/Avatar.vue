@@ -3,7 +3,7 @@
     variant="dark"
     :size="size"
     :rounded="type === 'account'"
-    :class="{ token: type === 'token' }"
+    :class="{ token: type === 'token', account: type === 'account' }"
   >
     <svg ref="frame" :width="size" :height="size" />
   </b-avatar>
@@ -34,6 +34,9 @@ export default class Avatar extends Vue {
 
 <style scoped>
 .token {
-  border: solid gold 2px;
+  border: solid gold 0.1em;
+}
+.account {
+  border: solid rgb(179, 179, 179) 0.1em;
 }
 </style>

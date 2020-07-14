@@ -6,8 +6,9 @@ import store from "./store";
 import { BootstrapVue, IconsPlugin } from "bootstrap-vue";
 Vue.use(BootstrapVue);
 Vue.use(IconsPlugin);
-import "bootstrap/dist/css/bootstrap.css";
-import "bootstrap-vue/dist/bootstrap-vue.css";
+// import "bootstrap/dist/css/bootstrap.css";
+import "./style/index.scss";
+// import "bootstrap-vue/dist/bootstrap-vue.css";
 
 import BlockchainClient from "./services/client";
 declare module "vue/types/vue" {
