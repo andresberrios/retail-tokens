@@ -5,9 +5,8 @@
       :items="transfers"
       :fields="fields"
       :bordered="true"
-      head-variant="dark"
-      table-variant="dark"
-      stacked="md"
+      thead-class="bg-dark"
+      responsive
       show-empty
       class="m-0"
     >
