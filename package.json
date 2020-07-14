@@ -2,6 +2,7 @@
   "name": "root",
   "private": true,
   "scripts": {
+    "postinstall": "lerna bootstrap",
     "clean": "lerna clean -y && rm -rf node_modules",
     "build": "cd packages/server && npm run build",
     "start": "cd packages/server && npm run start:production"
