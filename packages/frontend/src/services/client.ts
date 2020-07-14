@@ -227,7 +227,7 @@ export default class BlockchainClient {
     validatePreviousResultSet(previousSet);
     const limit = previousSet?.limit || 100;
     const data: TableScopesResultSet = await this.rpc.get_table_by_scope({
-      code: "retailtokens",
+      code: this.contract,
       table: "stat",
       lower_bound: getCursorCheckpoint(previousSet)
     });
