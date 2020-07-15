@@ -2,12 +2,16 @@
   <b-container class="py-5">
     <div class="d-flex align-items-center">
       <Avatar size="4em" :value="token" type="token" />
-      <h2 class="m-0 ml-3">{{ token }}</h2>
-      <b-button class="ml-auto" :to="{ name: 'register', params: { token } }">
+      <h2 class="m-0 ml-3 text-light">{{ token }}</h2>
+      <b-button
+        class="ml-auto"
+        variant="outline-success"
+        :to="{ name: 'register', params: { token } }"
+      >
         Register
       </b-button>
     </div>
-    <hr />
+    <hr class="my-4" id="separator" />
     <TokenInfo :token="token" />
   </b-container>
 </template>
@@ -26,4 +30,8 @@ export default class TokenView extends Vue {
 }
 </script>
 
-<style></style>
+<style scoped>
+#separator {
+  border-color: #7a8288;
+}
+</style>

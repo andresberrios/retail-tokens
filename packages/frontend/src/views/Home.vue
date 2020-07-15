@@ -14,8 +14,10 @@
             <router-link
               :to="{ name: 'token', params: { token: token.symbol } }"
             >
-              <Avatar size="2em" :value="token.symbol" type="token" />
-              {{ token.symbol }}
+              <div class="d-flex align-items-center">
+                <Avatar size="2em" :value="token.symbol" type="token" />
+                <span class="ml-2">{{ token.symbol }}</span>
+              </div>
             </router-link>
           </b-col>
           <b-col sm="2">
