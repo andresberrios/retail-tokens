@@ -122,9 +122,9 @@ export default class BlockchainClient {
   session?: LinkSession;
 
   constructor(
-    endpoint = process.env.VUE_APP_CHAIN_NODE || "http://localhost:8080",
-    public contract = process.env.VUE_APP_CONTRACT_ACCOUNT || "retailtokens",
-    public backend = process.env.VUE_APP_BACKEND_URL || "http://localhost:3000"
+    endpoint = "http://localhost:8080",
+    public contract = "retailtokens",
+    public backend = "http://localhost:3000"
   ) {
     this.hyp = new Hyperion(endpoint, { fetch });
     this.rpc = new JsonRpc(this.hyp.endpoint);
@@ -227,7 +227,7 @@ export default class BlockchainClient {
     validatePreviousResultSet(previousSet);
     const limit = previousSet?.limit || 100;
     const data: TableScopesResultSet = await this.rpc.get_table_by_scope({
-      code: "retailtokens",
+      code: this.contract,
       table: "stat",
       lower_bound: getCursorCheckpoint(previousSet)
     });
