@@ -19,6 +19,7 @@
                   placeholder="Enter your Telos account"
                   type="text"
                   maxlength="12"
+                  required
                 ></b-input>
               </b-input-group>
             </b-form-group>
@@ -32,13 +33,21 @@
                   v-model="registration.email"
                   placeholder="Enter your email"
                   type="email"
+                  required
                 ></b-input>
               </b-input-group>
             </b-form-group>
             <b-alert show variant="danger" v-if="errorMessage" class="my-4">
               {{ errorMessage }}
             </b-alert>
-            <b-button block size="lg" type="submit" variant="success">
+            <b-button
+              block
+              size="lg"
+              type="submit"
+              variant="success"
+              :disabled="loading"
+            >
+              <b-spinner small variant="light" v-if="loading" />
               Submit
             </b-button>
           </b-card>
@@ -80,9 +89,11 @@ export default class Register extends Vue {
   };
 
   submitted = false;
+  loading = false;
   errorMessage = "";
 
   async submit() {
+    this.loading = true;
     try {
       await this.$client.submitRegistration(
         this.token,
@@ -100,6 +111,7 @@ export default class Register extends Vue {
         this.errorMessage = "Could not submit registration.";
       }
     }
+    this.loading = false;
   }
 }
 </script>
